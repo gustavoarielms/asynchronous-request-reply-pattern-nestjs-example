@@ -1,9 +1,11 @@
-import { Controller, Post, Body, HttpCode } from '@nestjs/common';
-import { AsyncService } from '../../services/async/async.service';
+import { Controller, Post, Body, Get, Param, HttpCode, Inject } from '@nestjs/common';
+import { IAsyncService } from '../../interfaces/async-service.interface';
 
 @Controller('async')
 export class AsyncController {
-  constructor(private readonly asyncService: AsyncService) {}
+  constructor(
+    @Inject('IAsyncService') private readonly asyncService: IAsyncService
+  ) {}
 
   @Post('request')
   @HttpCode(202)
@@ -13,5 +15,10 @@ export class AsyncController {
       status: 'Accepted',
       location: `/async/status/${requestId}`,
     };
+  }
+
+  @Get('status/:id')
+  async getStatus(@Param('id') id: string): Promise<any> {
+    return await this.asyncService.getStatus(id);
   }
 }
