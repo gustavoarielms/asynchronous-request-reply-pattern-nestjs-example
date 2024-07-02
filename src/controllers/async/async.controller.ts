@@ -1,5 +1,6 @@
 import { Controller, Post, Body, Get, Param, HttpCode, Inject } from '@nestjs/common';
 import { IAsyncService } from '../../interfaces/async-service.interface';
+import { Async } from '../../decorators/async/async.decorator';
 
 @Controller('async')
 export class AsyncController {
@@ -8,6 +9,7 @@ export class AsyncController {
   ) {}
 
   @Post('request')
+  @Async()
   @HttpCode(202)
   async handleRequest(@Body() body: any): Promise<{ status: string; location: string }> {
     const requestId = await this.asyncService.startProcess(body.data);
