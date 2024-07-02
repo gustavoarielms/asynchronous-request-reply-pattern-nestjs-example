@@ -10,6 +10,7 @@ import { AsyncInterceptor } from 'src/interceptors/async/async.interceptor';
     {
       provide: 'IAsyncService',
       useClass: AsyncService,
+      scope: Scope.REQUEST
     },
     AsyncInterceptor,
   ],
