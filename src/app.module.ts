@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AsyncController } from './async/async.controller';
-import { AsyncModule } from './async/async.module';
-import { AsyncStatusController } from './async-status/async-status.controller';
+import { AsyncController } from './controllers/async/async.controller';
+import { AsyncModule } from './modules/async.module';
+import { AsyncStatusController } from './controllers/async-status.controller';
 
 @Module({
   imports: [AsyncModule],

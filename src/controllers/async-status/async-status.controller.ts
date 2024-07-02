@@ -1,5 +1,5 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { AsyncService } from './async.service';
+import { AsyncService } from '../../services/async/async.service';
 
 @Controller('async')
 export class AsyncStatusController {
