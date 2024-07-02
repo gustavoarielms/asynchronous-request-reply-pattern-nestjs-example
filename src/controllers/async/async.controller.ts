@@ -16,9 +16,4 @@ export class AsyncController {
       location: `/async/status/${requestId}`,
     };
   }
-
-  @Get('status/:id')
-  async getStatus(@Param('id') id: string): Promise<any> {
-    return await this.asyncService.getStatus(id);
-  }
 }
