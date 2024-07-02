@@ -12,10 +12,7 @@ export class AsyncController {
   @Async()
   @HttpCode(202)
   async handleRequest(@Body() body: any): Promise<{ status: string; location: string }> {
-    const requestId = await this.asyncService.startProcess(body.data);
-    return {
-      status: 'Accepted',
-      location: `/async/status/${requestId}`,
-    };
+    const response = await this.asyncService.startProcess(body.data);
+    return response;
   }
 }

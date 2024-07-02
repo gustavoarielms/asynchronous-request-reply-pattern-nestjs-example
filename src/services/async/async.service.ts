@@ -5,13 +5,16 @@ import { IAsyncService } from '../../interfaces/async-service.interface';
 export class AsyncService implements IAsyncService {
   private readonly results = new Map<string, any>();
 
-  async startProcess(data: any): Promise<string> {
+  async startProcess(data: any): Promise<{ status: string; location: string }> {
     const requestId = this.generateRequestId();
     // Simular un proceso asíncrono
     setTimeout(() => {
       this.results.set(requestId, { status: 'Completed', result: `Processed: ${data}` });
     }, 5000);
-    return requestId;
+    return {
+      status: 'Accepted',
+      location: `/async/status/${requestId}`,
+    };
   }
 
   async getStatus(requestId: string): Promise<any> {
