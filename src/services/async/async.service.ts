@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { IAsyncService } from '../../interfaces/async-service.interface';
 
 @Injectable()
-export class AsyncService {
+export class AsyncService implements IAsyncService {
   private readonly results = new Map<string, any>();
 
   async startProcess(data: any): Promise<string> {

@@ -1,18 +1,22 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { AsyncController } from './async.controller';
+import { Controller, Post, Body, Get, Param, HttpCode } from '@nestjs/common';
+import { IAsyncService } from '../../interfaces/async-service.interface';
 
-describe('AsyncController', () => {
-  let controller: AsyncController;
+@Controller('async')
+export class AsyncController {
+  constructor(private readonly asyncService: IAsyncService) {}
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      controllers: [AsyncController],
-    }).compile();
+  @Post('request')
+  @HttpCode(202)
+  async handleRequest(@Body() body: any): Promise<{ status: string; location: string }> {
+    const requestId = await this.asyncService.startProcess(body.data);
+    return {
+      status: 'Accepted',
+      location: `/async/status/${requestId}`,
+    };
+  }
 
-    controller = module.get<AsyncController>(AsyncController);
-  });
-
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
-});
+  @Get('status/:id')
+  async getStatus(@Param('id') id: string): Promise<any> {
+    return await this.asyncService.getStatus(id);
+  }
+}
