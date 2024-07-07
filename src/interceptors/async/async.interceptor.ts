@@ -7,7 +7,7 @@ import {
   Inject,
 } from '@nestjs/common';
 import { Observable, of } from 'rxjs';
-import { IAsyncService } from 'src/interfaces/async-service.interface';
+import { IAsyncService } from '../../interfaces/async-service.interface';
 
 @Injectable()
 export class AsyncInterceptor implements NestInterceptor {
@@ -17,7 +17,6 @@ export class AsyncInterceptor implements NestInterceptor {
 
   async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
     const request = context.switchToHttp().getRequest();
-    const response = context.switchToHttp().getResponse();
 
     if (request.method !== 'GET') {
       if (request.body.data) {

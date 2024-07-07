@@ -2,7 +2,7 @@ import { Module, Scope } from '@nestjs/common';
 import { AsyncService } from '../services/async/async.service';
 import { AsyncController } from '../controllers/async/async.controller';
 import { AsyncStatusController } from '../controllers/async-status/async-status.controller';
-import { AsyncInterceptor } from 'src/interceptors/async/async.interceptor';
+import { AsyncInterceptor } from '../interceptors/async/async.interceptor';
 
 @Module({
   controllers: [AsyncController, AsyncStatusController],

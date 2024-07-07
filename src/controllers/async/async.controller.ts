@@ -1,6 +1,6 @@
 import { Controller, Post, Body, Get, Param, HttpCode, Inject } from '@nestjs/common';
-import { IAsyncService } from '../../interfaces/async-service.interface';
 import { Async } from '../../decorators/async/async.decorator';
+import { IAsyncService } from '../../interfaces/async-service.interface';
 
 @Controller('async')
 export class AsyncController {

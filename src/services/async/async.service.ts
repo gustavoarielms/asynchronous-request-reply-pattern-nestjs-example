@@ -1,27 +1,29 @@
 import { Injectable } from '@nestjs/common';
-import { IAsyncService } from '../../interfaces/async-service.interface';
+import { myQueue } from '../../config/bullmq.config';
 
 @Injectable()
-export class AsyncService implements IAsyncService {
-  private readonly results = new Map<string, any>();
-
+export class AsyncService {
   async startProcess(data: any): Promise<{ status: string; location: string }> {
-    const requestId = this.generateRequestId();
-    // Simular un proceso asíncrono
-    setTimeout(() => {
-      this.results.set(requestId, { status: 'Completed', result: `Processed: ${data}` });
-    }, 5000);
+    const job = await myQueue.add('process-job', { data });
+
     return {
       status: 'Accepted',
-      location: `/async/status/${requestId}`,
+      location: `/async/status/${job.id}`,
     };
   }
 
-  async getStatus(requestId: string): Promise<any> {
-    return this.results.get(requestId) || { status: 'Processing' };
-  }
+  async getStatus(jobId: string): Promise<any> {
+    const job = await myQueue.getJob(jobId);
+    if (!job) {
+      return { status: 'Not found' };
+    }
 
-  private generateRequestId(): string {
-    return Math.random().toString(36).substring(2, 15);
+    const state = await job.getState();
+    const result = job.returnvalue;
+
+    return {
+      status: state,
+      result: result || 'Processing',
+    };
   }
 }
