@@ -1,4 +1,4 @@
 export interface IAsyncService {
-    startProcess(data: any): Promise<{ status: string; location: string }>;
+    startProcess(data: any, externalMethod: () => Promise<any>): Promise<{ status: string; location: string }>;
     getStatus(requestId: string): Promise<any>;
   }

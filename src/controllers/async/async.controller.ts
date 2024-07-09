@@ -9,10 +9,13 @@ export class AsyncController {
   ) {}
 
   @Post('request')
-  @Async()
+  @Async(async () => {
+    // Simular una llamada externa con un retraso
+    await new Promise(resolve => setTimeout(resolve, 5000));
+    //return 'External method result';
+  })
   @HttpCode(202)
   async handleRequest(@Body() body: any): Promise<{ status: string; location: string }> {
-    const response = await this.asyncService.startProcess(body.data);
-    return response;
+    return;
   }
 }

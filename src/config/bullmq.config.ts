@@ -18,7 +18,7 @@ export const myWorker = new Worker(queueName, async (job: Job) => {
   // Lógica para procesar la tarea
   const data = job.data;
   await new Promise(resolve => setTimeout(resolve, 5000)); // Simula un retraso de 5 segundos
-  return `processed: ${data}`;
+  return `processed: ${data.data}`;
 }, { connection });
 
 myWorker.on('completed', (job) => {
