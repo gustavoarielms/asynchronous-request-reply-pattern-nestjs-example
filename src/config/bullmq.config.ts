@@ -1,9 +1,13 @@
 import { Queue, Worker, Job } from 'bullmq';
 import IORedis from 'ioredis';
+import { config } from 'dotenv';
+
+config();
 
 const connection = new IORedis({
-  host: '127.0.0.1', // Cambia esto si usas un host diferente
-  port: 6379,        // Cambia esto si usas un puerto diferente
+  host: process.env.REDIS_HOST || 'localhost',
+  port: Number(process.env.REDIS_PORT) || 6379,
+  password: process.env.REDIS_PASSWORD || undefined,
   maxRetriesPerRequest: null
 });
 
@@ -13,7 +17,8 @@ export const myQueue = new Queue(queueName, { connection });
 export const myWorker = new Worker(queueName, async (job: Job) => {
   // Lógica para procesar la tarea
   const data = job.data;
-  return `Processed: ${data}`;
+  await new Promise(resolve => setTimeout(resolve, 5000)); // Simula un retraso de 5 segundos
+  return `processed: ${data}`;
 }, { connection });
 
 myWorker.on('completed', (job) => {

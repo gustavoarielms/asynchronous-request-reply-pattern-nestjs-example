@@ -1,7 +1,7 @@
 import { Controller, Get, Param, Inject } from '@nestjs/common';
 import { IAsyncService } from '../../interfaces/async-service.interface';
 
-@Controller('async')
+@Controller('async-status')
 export class AsyncStatusController {
   constructor(
     @Inject('IAsyncService') private readonly asyncService: IAsyncService
@@ -9,6 +9,9 @@ export class AsyncStatusController {
 
   @Get('status/:id')
   async getStatus(@Param('id') id: string): Promise<any> {
-    return await this.asyncService.getStatus(id);
+    var response = await this.asyncService.getStatus(id);
+    console.log(response);
+    console.log(`Job: ${id}, ${response.status}`);
+    return response;
   }
 }

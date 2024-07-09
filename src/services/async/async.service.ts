@@ -7,8 +7,8 @@ export class AsyncService {
     const job = await myQueue.add('process-job', { data });
 
     return {
-      status: 'Accepted',
-      location: `/async/status/${job.id}`,
+      status: 'accepted',
+      location: `/async-status/status/${job.id}`,
     };
   }
 

@@ -24,6 +24,7 @@
     "@nestjs/core": "^10.3.10",
     "@nestjs/platform-express": "^10.3.10",
     "bullmq": "^5.8.4",
+    "dotenv": "^16.4.5",
     "glob": "^10.4.3",
     "install": "^0.13.0",
     "ioredis": "^5.4.1",
