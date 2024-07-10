@@ -4,10 +4,10 @@ import { myQueue } from '../../config/bullmq.config';
 @Injectable()
 export class AsyncService {
   
-  async startProcess(data: any, externalMethod: () => Promise<any>): Promise<{ status: string; location: string }> {
-    const job = await myQueue.add('process-job', { data });
-    
-    externalMethod();
+  async startProcess(params: any, externalMethod: Function): Promise<{ status: string; location: string }> {
+
+    const serializedMethod = externalMethod.toString();
+    const job = await myQueue.add('process-job', { params, method: serializedMethod } );
 
     return {
       status: 'accepted',

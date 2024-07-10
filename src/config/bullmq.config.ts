@@ -11,14 +11,21 @@ const connection = new IORedis({
   maxRetriesPerRequest: null
 });
 
-const queueName = 'my-queue';
+const queueName = process.env.REDIS_QUEUE || 'my-queue';
 export const myQueue = new Queue(queueName, { connection });
 
-export const myWorker = new Worker(queueName, async (job: Job) => {
-  // Lógica para procesar la tarea
-  const data = job.data;
-  await new Promise(resolve => setTimeout(resolve, 5000)); // Simula un retraso de 5 segundos
-  return `processed: ${data.data}`;
+
+
+export const myWorker = new Worker('my-queue', async (job: Job) => {
+  const { params, method } = job.data;
+  const externalMethod = eval(`(${method})`);
+
+  console.log(params);
+
+  let result = await externalMethod(params);
+
+  return result;
+
 }, { connection });
 
 myWorker.on('completed', (job) => {
