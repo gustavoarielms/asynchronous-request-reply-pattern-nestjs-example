@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://learn.microsoft.com/en-us/azure/architecture/patterns/async-request-reply" target="blank"><img src="https://learn.microsoft.com/en-us/azure/architecture/patterns/_images/async-request.png" width="200" alt="Nest Logo" /></a>
+  <a href="https://learn.microsoft.com/en-us/azure/architecture/patterns/async-request-reply" target="blank"><img src="/en-us/azure/architecture/patterns/_images/async-request.png" alt="Request and response flow for asynchronous HTTP requests" data-linktype="absolute-path"></a>
 </p>
 
 [circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
