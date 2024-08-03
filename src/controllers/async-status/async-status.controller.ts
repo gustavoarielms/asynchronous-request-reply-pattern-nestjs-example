@@ -1,10 +1,10 @@
 import { Controller, Get, Param, Inject } from '@nestjs/common';
-import { IAsyncService } from '../../interfaces/async-service.interface';
+import { IAsyncPatternGetStatus } from '../../interfaces/services/async-pattern-service/async-pattern-get-status.interface';
 
 @Controller('async-status')
 export class AsyncStatusController {
   constructor(
-    @Inject('IAsyncService') private readonly asyncService: IAsyncService
+    @Inject('IAsyncPatternGetStatus') private readonly asyncService: IAsyncPatternGetStatus
   ) {}
 
   @Get('status/:id')

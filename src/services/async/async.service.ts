@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { myQueue } from '../../config/bullmq.config';
-
+import { IAsyncPatternStartProcess } from '../../interfaces/services/async-pattern-service/async-pattern-start-process.interface';
+import { IAsyncPatternGetStatus } from '../../interfaces/services/async-pattern-service/async-pattern-get-status.interface';
 @Injectable()
-export class AsyncService {
+export class AsyncPatternService implements IAsyncPatternStartProcess, IAsyncPatternGetStatus {
   
-  async startProcess(params: any, externalMethod: Function): Promise<{ status: string; location: string }> {
+  async startProcess(externalMethod: Function): Promise<{ status: string; location: string }> {
 
     const serializedMethod = externalMethod.toString();
-    const job = await myQueue.add('process-job', { params, method: serializedMethod } );
+    const job = await myQueue.add('process-job', {method: serializedMethod } );
 
     return {
       status: 'accepted',

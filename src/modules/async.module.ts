@@ -1,18 +1,33 @@
 import { Module, Scope } from '@nestjs/common';
-import { AsyncService } from '../services/async/async.service';
 import { AsyncController } from '../controllers/async/async.controller';
 import { AsyncStatusController } from '../controllers/async-status/async-status.controller';
-import { AsyncInterceptor } from '../interceptors/async/async.interceptor';
+import { AsyncPatternService } from '../services/async/async.service';
+import { BusinessService } from '../services/business/business.service';
+import { BusinessInteractor } from '../interactors/business/business.interactor';
 
 @Module({
   controllers: [AsyncController, AsyncStatusController],
   providers: [
     {
-      provide: 'IAsyncService',
-      useClass: AsyncService,
+      provide: 'IAsyncPatternGetStatus',
+      useClass: AsyncPatternService,
       scope: Scope.REQUEST
     },
-    AsyncInterceptor,
+    {
+      provide: 'IAsyncPatternStartProcess',
+      useClass: AsyncPatternService,
+      scope: Scope.REQUEST
+    },
+    {
+      provide: 'IBusinessService',
+      useClass: BusinessService,
+      scope: Scope.REQUEST
+    },
+    {
+      provide: 'IBusinessInteractor',
+      useClass: BusinessInteractor,
+      scope: Scope.REQUEST
+    }
   ],
 })
 export class AsyncModule {}

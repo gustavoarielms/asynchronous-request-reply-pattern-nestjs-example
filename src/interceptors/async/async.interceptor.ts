@@ -7,13 +7,13 @@ import {
   Inject,
 } from '@nestjs/common';
 import { Observable, of } from 'rxjs';
-import { IAsyncService } from '../../interfaces/async-service.interface';
 import { Reflector } from '@nestjs/core';
+import { IAsyncPatternStartProcess } from '../../interfaces/services/async-pattern-service/async-pattern-start-process.interface';
 
 @Injectable()
 export class AsyncInterceptor implements NestInterceptor {
   constructor(
-    @Inject('IAsyncService') private readonly asyncService: IAsyncService,
+    @Inject('IAsyncPatternStartProcess') private readonly asyncService: IAsyncPatternStartProcess,
     private readonly reflector: Reflector
   ) {}
 
@@ -25,7 +25,7 @@ export class AsyncInterceptor implements NestInterceptor {
     if (request.method !== 'GET') {
       if (request.body.data && externalMethod) {
         // Pasar el método externo al servicio
-        const serviceResponse = await this.asyncService.startProcess(request.body.data, externalMethod);
+        const serviceResponse = await this.asyncService.startProcess(request.body.data);
         return of(serviceResponse); // Retorna la respuesta del servicio directamente
       } else {
         throw new BadRequestException('Data field is required');
