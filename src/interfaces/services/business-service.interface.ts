@@ -1,3 +1,3 @@
 export interface IBusinessService {
-  processData(data: any): Promise<any>
+  save(data: any): Promise<any>
 }

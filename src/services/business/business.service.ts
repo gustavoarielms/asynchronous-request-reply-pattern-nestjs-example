@@ -1,11 +1,16 @@
-import { Injectable } from '@nestjs/common';
 import { IBusinessService } from '../../interfaces/services/business-service.interface';
+import * as fs from 'fs';
+import * as path from 'path';
 
-@Injectable()
-export class BusinessService implements IBusinessService{
-  async processData(data: any): Promise<any> {
-    // Simula una operación asincrónica
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    return `Processed: ${data}`;
+export class BusinessService implements IBusinessService  {
+
+  async save(data: any): Promise<any>{
+    console.log(data.data);
+    const filePath = path.join(__dirname, 'output.txt');
+    await new Promise(resolve => setTimeout(resolve, data.data.milliseconds));
+    // Guardar en un archivo
+    console.log(data.data.name);
+    fs.writeFileSync(filePath, data.data.name);
+    return `Processed data: ${data.data.name}`;
   }
 }

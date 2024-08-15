@@ -4,8 +4,21 @@ import { AsyncStatusController } from '../controllers/async-status/async-status.
 import { AsyncPatternService } from '../services/async/async.service';
 import { BusinessService } from '../services/business/business.service';
 import { BusinessInteractor } from '../interactors/business/business.interactor';
+import { BullModule } from '@nestjs/bullmq';
 
 @Module({
+  imports:[
+    BullModule.forRoot({
+      connection: {
+        host: process.env.REDIS_HOST || 'localhost',
+        port: Number(process.env.REDIS_PORT) || 6379,
+        password: process.env.REDIS_PASSWORD || undefined,
+        maxRetriesPerRequest: null
+      },
+    }),
+    BullModule.registerQueue({
+      name: 'async',
+    })],
   controllers: [AsyncController, AsyncStatusController],
   providers: [
     {
@@ -23,11 +36,8 @@ import { BusinessInteractor } from '../interactors/business/business.interactor'
       useClass: BusinessService,
       scope: Scope.REQUEST
     },
-    {
-      provide: 'IBusinessInteractor',
-      useClass: BusinessInteractor,
-      scope: Scope.REQUEST
-    }
+    BusinessInteractor
   ],
 })
+
 export class AsyncModule {}

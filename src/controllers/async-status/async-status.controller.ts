@@ -10,7 +10,6 @@ export class AsyncStatusController {
   @Get('status/:id')
   async getStatus(@Param('id') id: string): Promise<any> {
     var response = await this.asyncService.getStatus(id);
-    console.log(response);
     console.log(`Job: ${id}, ${response.status}`);
     return response;
   }
