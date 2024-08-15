@@ -18,7 +18,6 @@ export class BusinessInteractor extends WorkerHost {
   }
 
   async process(job: Job<any, any, string>): Promise<any> {
-    await this.businessService.save(job.data);
-    return {};
+    return this.businessService.save(job.data);;
   }
 }
