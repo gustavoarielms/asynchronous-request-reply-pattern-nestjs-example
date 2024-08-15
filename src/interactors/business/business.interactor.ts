@@ -1,5 +1,4 @@
 import { Inject, Scope } from '@nestjs/common';
-import { IBusinessInteractor } from '../../interfaces/interactors/business.interface';
 import { IBusinessService } from '../../interfaces/services/business-service.interface';
 import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Job } from 'bullmq';
