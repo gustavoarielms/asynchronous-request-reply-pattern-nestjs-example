@@ -1,6 +1,6 @@
 import { Controller, Post, Body, HttpCode, Inject } from '@nestjs/common';
 import { IAsyncPatternStartProcess } from '../../interfaces/services/async-pattern-service/async-pattern-start-process.interface';
-import { Async } from 'src/decorators/async/async.decorator';
+import { Async } from '../../decorators/async/async.decorator';
 
 @Controller('async')
 export class AsyncController {
