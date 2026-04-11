@@ -1,3 +1,5 @@
+import { AsyncRequestData } from '../http/async/async-request-body.interface';
+
 export interface IBusinessService {
-  save(data: any): Promise<any>
+  save(data: AsyncRequestData): Promise<string>
 }
