@@ -1,27 +1,30 @@
-export type AsyncQueueState =
+export type AsyncPendingQueueState =
   | 'active'
-  | 'completed'
   | 'delayed'
   | 'paused'
   | 'prioritized'
   | 'waiting'
   | 'waiting-children';
 
-export interface AsyncNotFoundResponse {
-  status: 'Not found';
-}
-
 export interface AsyncFailedResponse {
   status: 'failed';
   result: string;
+  completed: true;
 }
 
-export interface AsyncInProgressResponse {
-  status: AsyncQueueState;
+export interface AsyncCompletedResponse {
+  status: 'completed';
   result: string;
+  completed: true;
+}
+
+export interface AsyncPendingResponse {
+  status: AsyncPendingQueueState;
+  result: string;
+  completed: false;
 }
 
 export type AsyncStatusResponse =
-  | AsyncNotFoundResponse
   | AsyncFailedResponse
-  | AsyncInProgressResponse;
+  | AsyncCompletedResponse
+  | AsyncPendingResponse;

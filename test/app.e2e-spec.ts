@@ -1,4 +1,4 @@
-import { CallHandler, ExecutionContext, INestApplication } from '@nestjs/common';
+import { CallHandler, ExecutionContext, INestApplication, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { lastValueFrom } from 'rxjs';
 import { of } from 'rxjs';
@@ -86,12 +86,24 @@ describe('Async flow integration', () => {
     asyncPatternGetStatusMock.getStatus.mockResolvedValue({
       status: 'completed',
       result: 'Processed data: job',
+      completed: true,
     });
 
     await expect(asyncStatusController.getStatus('123')).resolves.toEqual({
       status: 'completed',
       result: 'Processed data: job',
+      completed: true,
     });
     expect(asyncPatternGetStatusMock.getStatus).toHaveBeenCalledWith('123');
+  });
+
+  it('propagates not found errors for unknown job ids', async () => {
+    asyncPatternGetStatusMock.getStatus.mockRejectedValue(
+      new NotFoundException('Job missing not found')
+    );
+
+    await expect(asyncStatusController.getStatus('missing')).rejects.toBeInstanceOf(
+      NotFoundException
+    );
   });
 });

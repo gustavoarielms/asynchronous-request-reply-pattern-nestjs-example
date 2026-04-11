@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { AsyncAcceptedResponse } from '../../interfaces/http/async/async-accepted-response.interface';
 import { AsyncRequestData } from '../../interfaces/http/async/async-request-body.interface';
 import {
-  AsyncQueueState,
+  AsyncPendingQueueState,
   AsyncStatusResponse,
 } from '../../interfaces/http/async/async-status-response.interface';
 import { IAsyncPatternGetStatus } from '../../interfaces/services/async-pattern-service/async-pattern-get-status.interface';
@@ -28,22 +28,32 @@ export class AsyncPatternService implements IAsyncPatternStartProcess, IAsyncPat
   async getStatus(jobId: string): Promise<AsyncStatusResponse> {
     const job = await this.asyncQueue.getJob(jobId);
     if (!job) {
-      return { status: 'Not found' };
+      throw new NotFoundException(`Job ${jobId} not found`);
     }
 
-    const state = await job.getState() as AsyncQueueState | 'failed';
+    const state = await job.getState() as AsyncPendingQueueState | 'completed' | 'failed';
     const result = job.returnvalue;
 
     if (state === 'failed') {
       return {
         status: state,
         result: job.failedReason,
+        completed: true,
+      };
+    }
+
+    if (state === 'completed') {
+      return {
+        status: state,
+        result: result || 'Processing',
+        completed: true,
       };
     }
 
     return {
       status: state,
       result: result || 'Processing',
+      completed: false,
     };
   }
 }

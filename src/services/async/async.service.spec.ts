@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getQueueToken } from '@nestjs/bullmq';
+import { NotFoundException } from '@nestjs/common';
 import { AsyncPatternService } from './async.service';
 
 describe('AsyncService', () => {
@@ -52,6 +53,27 @@ describe('AsyncService', () => {
     await expect(service.getStatus('123')).resolves.toEqual({
       status: 'completed',
       result: 'Processed data: job',
+      completed: true,
     });
+  });
+
+  it('should return a pending response for a queued job', async () => {
+    queueMock.getJob.mockResolvedValue({
+      getState: jest.fn().mockResolvedValue('waiting'),
+      returnvalue: null,
+      failedReason: null,
+    });
+
+    await expect(service.getStatus('123')).resolves.toEqual({
+      status: 'waiting',
+      result: 'Processing',
+      completed: false,
+    });
+  });
+
+  it('should throw not found when the job does not exist', async () => {
+    queueMock.getJob.mockResolvedValue(null);
+
+    await expect(service.getStatus('missing')).rejects.toBeInstanceOf(NotFoundException);
   });
 });
