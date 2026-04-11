@@ -1,3 +1,6 @@
+import { AsyncAcceptedResponse } from '../../http/async/async-accepted-response.interface';
+import { AsyncRequestData } from '../../http/async/async-request-body.interface';
+
 export interface IAsyncPatternStartProcess {
-    startProcess(data: any): Promise<{ status: string; location: string }>;
-  }
+  startProcess(data: AsyncRequestData): Promise<AsyncAcceptedResponse>;
+}

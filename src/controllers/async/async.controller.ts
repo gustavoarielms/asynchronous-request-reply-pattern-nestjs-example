@@ -1,4 +1,6 @@
 import { Controller, Post, Body, HttpCode, Inject } from '@nestjs/common';
+import { AsyncAcceptedResponse } from '../../interfaces/http/async/async-accepted-response.interface';
+import { AsyncRequestBody } from '../../interfaces/http/async/async-request-body.interface';
 import { IAsyncPatternStartProcess } from '../../interfaces/services/async-pattern-service/async-pattern-start-process.interface';
 import { Async } from '../../decorators/async/async.decorator';
 
@@ -11,7 +13,7 @@ export class AsyncController {
   @Post('save')
   @Async()
   @HttpCode(202)
-  async handleRequest(@Body() body: any): Promise<{ status: string; location: string }> {
+  async handleRequest(@Body() body: AsyncRequestBody): Promise<AsyncAcceptedResponse> {
     //Todo es manejado por el interceptor async
     return;
   }

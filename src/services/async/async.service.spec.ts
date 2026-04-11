@@ -26,4 +26,32 @@ describe('AsyncService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
+
+  it('should enqueue the request data and return an accepted response', async () => {
+    queueMock.add.mockResolvedValue({ id: '123' });
+
+    await expect(
+      service.startProcess({ name: 'job', milliseconds: 10 })
+    ).resolves.toEqual({
+      status: 'accepted',
+      location: '/async-status/status/123',
+    });
+    expect(queueMock.add).toHaveBeenCalledWith('processJob', {
+      name: 'job',
+      milliseconds: 10,
+    });
+  });
+
+  it('should return the queue state and result for an existing job', async () => {
+    queueMock.getJob.mockResolvedValue({
+      getState: jest.fn().mockResolvedValue('completed'),
+      returnvalue: 'Processed data: job',
+      failedReason: null,
+    });
+
+    await expect(service.getStatus('123')).resolves.toEqual({
+      status: 'completed',
+      result: 'Processed data: job',
+    });
+  });
 });

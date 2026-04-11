@@ -1,10 +1,12 @@
 import { CallHandler, ExecutionContext, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { of } from 'rxjs';
 import { lastValueFrom } from 'rxjs';
+import { of } from 'rxjs';
 import { AsyncController } from '../src/controllers/async/async.controller';
 import { AsyncStatusController } from '../src/controllers/async-status/async-status.controller';
 import { AsyncInterceptor } from '../src/interceptors/async/async.interceptor';
+import { AsyncAcceptedResponse } from '../src/interfaces/http/async/async-accepted-response.interface';
+import { AsyncStatusResponse } from '../src/interfaces/http/async/async-status-response.interface';
 
 describe('Async flow integration', () => {
   let app: INestApplication;
@@ -13,10 +15,10 @@ describe('Async flow integration', () => {
   let asyncInterceptor: AsyncInterceptor;
 
   const asyncPatternStartProcessMock = {
-    startProcess: jest.fn(),
+    startProcess: jest.fn<Promise<AsyncAcceptedResponse>, []>(),
   };
   const asyncPatternGetStatusMock = {
-    getStatus: jest.fn(),
+    getStatus: jest.fn<Promise<AsyncStatusResponse>, []>(),
   };
 
   beforeEach(async () => {
