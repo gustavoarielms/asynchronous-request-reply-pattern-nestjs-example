@@ -1,4 +1,4 @@
-import { Module, Scope } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { AsyncController } from '../controllers/async/async.controller';
 import { AsyncStatusController } from '../controllers/async-status/async-status.controller';
 import { AsyncPatternService } from '../services/async/async.service';
@@ -21,20 +21,19 @@ import { BullModule } from '@nestjs/bullmq';
     })],
   controllers: [AsyncController, AsyncStatusController],
   providers: [
+    AsyncPatternService,
     {
       provide: 'IAsyncPatternGetStatus',
-      useClass: AsyncPatternService,
-      scope: Scope.REQUEST
+      useExisting: AsyncPatternService,
     },
     {
       provide: 'IAsyncPatternStartProcess',
-      useClass: AsyncPatternService,
-      scope: Scope.REQUEST
+      useExisting: AsyncPatternService,
     },
+    BusinessService,
     {
       provide: 'IBusinessService',
-      useClass: BusinessService,
-      scope: Scope.REQUEST
+      useExisting: BusinessService,
     },
     BusinessInteractor
   ],
