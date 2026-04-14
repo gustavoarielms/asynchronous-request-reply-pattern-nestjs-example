@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getQueueToken } from '@nestjs/bullmq';
 import { NotFoundException } from '@nestjs/common';
-import { AsyncPatternService } from './async.service';
+import { AsyncPatternService } from '../../lib/async/services/async-pattern.service';
 
 describe('AsyncService', () => {
   let service: AsyncPatternService;
