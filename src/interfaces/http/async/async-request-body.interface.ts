@@ -1,8 +1,4 @@
-export interface AsyncRequestData {
-  name: string;
-  milliseconds: number;
-}
-
-export interface AsyncRequestBody {
-  data: AsyncRequestData;
-}
+export type {
+  AsyncRequestBody,
+  AsyncRequestData,
+} from '../../../lib/async/interfaces/http/async-request-body.interface';
