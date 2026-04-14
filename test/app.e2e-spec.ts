@@ -2,16 +2,17 @@ import { CallHandler, ExecutionContext, INestApplication, NotFoundException } fr
 import { Test, TestingModule } from '@nestjs/testing';
 import { lastValueFrom } from 'rxjs';
 import { of } from 'rxjs';
-import { AsyncController } from '../src/controllers/async/async.controller';
-import { AsyncStatusController } from '../src/controllers/async-status/async-status.controller';
-import { AsyncInterceptor } from '../src/interceptors/async/async.interceptor';
-import { AsyncAcceptedResponse } from '../src/interfaces/http/async/async-accepted-response.interface';
-import { AsyncStatusResponse } from '../src/interfaces/http/async/async-status-response.interface';
+import { ExampleAsyncController } from '../src/example/controllers/async.controller';
+import { ExampleAsyncStatusController } from '../src/example/controllers/async-status.controller';
+import { ASYNC_PATTERN_GET_STATUS, ASYNC_PATTERN_START_PROCESS } from '../src/lib/async/async.tokens';
+import { AsyncInterceptor } from '../src/lib/async/interceptors/async.interceptor';
+import { AsyncAcceptedResponse } from '../src/lib/async/interfaces/http/async-accepted-response.interface';
+import { AsyncStatusResponse } from '../src/lib/async/interfaces/http/async-status-response.interface';
 
 describe('Async flow integration', () => {
   let app: INestApplication;
-  let asyncController: AsyncController;
-  let asyncStatusController: AsyncStatusController;
+  let asyncController: ExampleAsyncController;
+  let asyncStatusController: ExampleAsyncStatusController;
   let asyncInterceptor: AsyncInterceptor;
 
   const asyncPatternStartProcessMock = {
@@ -23,15 +24,15 @@ describe('Async flow integration', () => {
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      controllers: [AsyncController, AsyncStatusController],
+      controllers: [ExampleAsyncController, ExampleAsyncStatusController],
       providers: [
         AsyncInterceptor,
         {
-          provide: 'IAsyncPatternStartProcess',
+          provide: ASYNC_PATTERN_START_PROCESS,
           useValue: asyncPatternStartProcessMock,
         },
         {
-          provide: 'IAsyncPatternGetStatus',
+          provide: ASYNC_PATTERN_GET_STATUS,
           useValue: asyncPatternGetStatusMock,
         },
       ],
@@ -40,8 +41,8 @@ describe('Async flow integration', () => {
     app = moduleFixture.createNestApplication();
     await app.init();
 
-    asyncController = moduleFixture.get(AsyncController);
-    asyncStatusController = moduleFixture.get(AsyncStatusController);
+    asyncController = moduleFixture.get(ExampleAsyncController);
+    asyncStatusController = moduleFixture.get(ExampleAsyncStatusController);
     asyncInterceptor = moduleFixture.get(AsyncInterceptor);
     jest.clearAllMocks();
   });

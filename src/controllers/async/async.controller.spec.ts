@@ -1,26 +1,27 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AsyncController } from './async.controller';
-import { AsyncInterceptor } from '../../interceptors/async/async.interceptor';
+import { ASYNC_PATTERN_START_PROCESS } from '../../lib/async/async.tokens';
+import { AsyncInterceptor } from '../../lib/async/interceptors/async.interceptor';
+import { ExampleAsyncController } from '../../example/controllers/async.controller';
 
 describe('AsyncController', () => {
-  let controller: AsyncController;
+  let controller: ExampleAsyncController;
   const asyncPatternStartProcessMock = {
     startProcess: jest.fn(),
   };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [AsyncController],
+      controllers: [ExampleAsyncController],
       providers: [
         AsyncInterceptor,
         {
-          provide: 'IAsyncPatternStartProcess',
+          provide: ASYNC_PATTERN_START_PROCESS,
           useValue: asyncPatternStartProcessMock,
         },
       ],
     }).compile();
 
-    controller = module.get<AsyncController>(AsyncController);
+    controller = module.get<ExampleAsyncController>(ExampleAsyncController);
   });
 
   it('should be defined', () => {
