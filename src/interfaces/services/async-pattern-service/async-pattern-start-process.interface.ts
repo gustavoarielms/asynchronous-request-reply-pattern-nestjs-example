@@ -1,6 +1,1 @@
-import { AsyncAcceptedResponse } from '../../http/async/async-accepted-response.interface';
-import { AsyncRequestData } from '../../http/async/async-request-body.interface';
-
-export interface IAsyncPatternStartProcess {
-  startProcess(data: AsyncRequestData): Promise<AsyncAcceptedResponse>;
-}
+export type { IAsyncPatternStartProcess } from '../../../lib/async/interfaces/services/async-pattern-start-process.interface';

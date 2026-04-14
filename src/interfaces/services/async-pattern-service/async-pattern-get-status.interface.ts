@@ -1,5 +1,1 @@
-import { AsyncStatusResponse } from '../../http/async/async-status-response.interface';
-
-export interface IAsyncPatternGetStatus {
-  getStatus(requestId: string): Promise<AsyncStatusResponse>;
-}
+export type { IAsyncPatternGetStatus } from '../../../lib/async/interfaces/services/async-pattern-get-status.interface';

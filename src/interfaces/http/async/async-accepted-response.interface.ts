@@ -1,4 +1,1 @@
-export interface AsyncAcceptedResponse {
-  status: 'accepted';
-  location: string;
-}
+export type { AsyncAcceptedResponse } from '../../../lib/async/interfaces/http/async-accepted-response.interface';

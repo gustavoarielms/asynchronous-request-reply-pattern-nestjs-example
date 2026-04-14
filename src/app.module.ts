@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { AsyncModule } from './modules/async.module';
+import { ExampleAsyncModule } from './example/example-async.module';
 
 @Module({
-  imports: [AsyncModule]
+  imports: [ExampleAsyncModule]
 })
 export class AppModule {}
