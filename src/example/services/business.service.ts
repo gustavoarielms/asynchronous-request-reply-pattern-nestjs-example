@@ -8,8 +8,13 @@ import * as path from 'path';
 export class BusinessService implements IBusinessService {
   async save(data: AsyncRequestData): Promise<string> {
     console.log(data);
-    const filePath = path.join(__dirname, 'output.txt');
     await new Promise(resolve => setTimeout(resolve, data.milliseconds));
+
+    if (data.name === 'fail' || data.name.startsWith('fail:')) {
+      throw new Error(`Simulated example failure for ${data.name}`);
+    }
+
+    const filePath = path.join(__dirname, 'output.txt');
     console.log(data.name);
     fs.writeFileSync(filePath, data.name);
     return `Processed data: ${data.name}`;

@@ -121,7 +121,7 @@ Failed job:
 ```json
 {
   "status": "failed",
-  "result": "failure reason",
+  "result": "Simulated example failure for fail:demo",
   "completed": true
 }
 ```
@@ -134,7 +134,7 @@ Unknown job id:
 
 ## Example flow with curl
 
-Create the job:
+Successful job:
 
 ```bash
 curl -i \
@@ -152,6 +152,46 @@ Then poll the returned location:
 
 ```bash
 curl http://localhost:3000/async-status/status/1
+```
+
+Long-running job to observe `waiting` or `active` before completion:
+
+```bash
+curl -i \
+  -X POST http://localhost:3000/async/save \
+  -H "Content-Type: application/json" \
+  -d '{
+    "data": {
+      "name": "slow-demo",
+      "milliseconds": 10000
+    }
+  }'
+```
+
+Poll immediately after creating it:
+
+```bash
+curl http://localhost:3000/async-status/status/2
+```
+
+Simulated failure:
+
+```bash
+curl -i \
+  -X POST http://localhost:3000/async/save \
+  -H "Content-Type: application/json" \
+  -d '{
+    "data": {
+      "name": "fail:demo",
+      "milliseconds": 500
+    }
+  }'
+```
+
+Then poll the returned location:
+
+```bash
+curl http://localhost:3000/async-status/status/3
 ```
 
 ## Tests
