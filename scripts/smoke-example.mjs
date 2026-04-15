@@ -116,6 +116,20 @@ async function getStatus(location) {
   return { httpStatus: response.status, payload };
 }
 
+async function assertImmediateStatus(location) {
+  const status = await getStatus(location);
+
+  if (status.httpStatus === 404) {
+    fail(`Expected ${location} to be visible immediately after 202 Accepted`);
+  }
+
+  if (status.httpStatus !== 200) {
+    fail(`Unexpected immediate status code ${status.httpStatus} for ${location}`);
+  }
+
+  return status.payload;
+}
+
 async function waitForTerminal(location) {
   const deadline = Date.now() + terminalTimeoutMs;
   const seenStates = new Set();
@@ -148,6 +162,7 @@ async function waitForTerminal(location) {
 
 async function assertSuccessCase() {
   const location = await createJob({ name: 'smoke-success', milliseconds: 200 });
+  await assertImmediateStatus(location);
   const { payload } = await waitForTerminal(location);
 
   if (payload.status !== 'completed') {
@@ -161,6 +176,7 @@ async function assertSuccessCase() {
 
 async function assertFailureCase() {
   const location = await createJob({ name: 'fail:smoke', milliseconds: 200 });
+  await assertImmediateStatus(location);
   const { payload } = await waitForTerminal(location);
 
   if (payload.status !== 'failed') {
@@ -174,6 +190,7 @@ async function assertFailureCase() {
 
 async function assertLongRunningCase() {
   const location = await createJob({ name: 'smoke-long', milliseconds: 8000 });
+  await assertImmediateStatus(location);
   const { payload, seenStates } = await waitForTerminal(location);
   const sawInProgress = seenStates.has('waiting') || seenStates.has('active');
 

@@ -107,4 +107,19 @@ describe('Async flow integration', () => {
       NotFoundException
     );
   });
+
+  it('returns accepted status when the job was accepted but is not visible in BullMQ yet', async () => {
+    asyncPatternGetStatusMock.getStatus.mockResolvedValue({
+      status: 'accepted',
+      result: 'Queued',
+      completed: false,
+    });
+
+    await expect(asyncStatusController.getStatus('123')).resolves.toEqual({
+      status: 'accepted',
+      result: 'Queued',
+      completed: false,
+    });
+    expect(asyncPatternGetStatusMock.getStatus).toHaveBeenCalledWith('123');
+  });
 });
