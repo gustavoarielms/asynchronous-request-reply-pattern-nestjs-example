@@ -4,20 +4,25 @@ import { Queue } from 'bullmq';
 import { AsyncAcceptedResponse } from '../interfaces/http/async-accepted-response.interface';
 import { AsyncRequestData } from '../interfaces/http/async-request-body.interface';
 import {
+  AsyncCompletedResponse,
+  AsyncFailedResponse,
   AsyncPendingQueueState,
   AsyncStatusResponse,
 } from '../interfaces/http/async-status-response.interface';
 import { IAsyncPatternGetStatus } from '../interfaces/services/async-pattern-get-status.interface';
 import { IAsyncPatternStartProcess } from '../interfaces/services/async-pattern-start-process.interface';
+import { AsyncStatusStoreService } from './async-status-store.service';
 
 @Injectable()
 export class AsyncPatternService implements IAsyncPatternStartProcess, IAsyncPatternGetStatus {
   constructor(
-    @InjectQueue('async') private readonly asyncQueue: Queue<AsyncRequestData>
+    @InjectQueue('async') private readonly asyncQueue: Queue<AsyncRequestData>,
+    private readonly asyncStatusStore: AsyncStatusStoreService
   ) {}
 
   async startProcess(data: AsyncRequestData): Promise<AsyncAcceptedResponse> {
     const job = await this.asyncQueue.add('processJob', data);
+    await this.asyncStatusStore.setAccepted(String(job.id));
 
     return {
       status: 'accepted',
@@ -26,31 +31,47 @@ export class AsyncPatternService implements IAsyncPatternStartProcess, IAsyncPat
   }
 
   async getStatus(jobId: string): Promise<AsyncStatusResponse> {
+    const storedStatus = await this.asyncStatusStore.get(jobId);
     const job = await this.asyncQueue.getJob(jobId);
-    if (!job) {
+
+    if (!job && !storedStatus) {
       throw new NotFoundException(`Job ${jobId} not found`);
+    }
+
+    if (!job && storedStatus) {
+      return storedStatus;
     }
 
     const state = await job.getState() as AsyncPendingQueueState | 'completed' | 'failed';
     const result = job.returnvalue;
 
     if (state === 'failed') {
-      return {
+      const response: AsyncFailedResponse = {
         status: state,
         result: job.failedReason,
         completed: true,
       };
+      await this.asyncStatusStore.setFailed(jobId, response.result);
+      return response;
     }
 
     if (state === 'completed') {
-      return {
+      const response: AsyncCompletedResponse = {
         status: state,
         result: result || 'Processing',
         completed: true,
       };
+      await this.asyncStatusStore.setCompleted(jobId, response.result);
+      return response;
     }
 
-    return {
+    if (state === 'active') {
+      await this.asyncStatusStore.setActive(jobId);
+    }
+
+    return storedStatus && storedStatus.status === 'accepted'
+      ? storedStatus
+      : {
       status: state,
       result: result || 'Processing',
       completed: false,

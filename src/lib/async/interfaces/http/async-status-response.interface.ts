@@ -1,5 +1,6 @@
 export type AsyncPendingQueueState =
   | 'active'
+  | 'accepted'
   | 'delayed'
   | 'paused'
   | 'prioritized'
