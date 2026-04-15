@@ -121,7 +121,7 @@ Failed job:
 ```json
 {
   "status": "failed",
-  "result": "failure reason",
+  "result": "Simulated example failure for fail:demo",
   "completed": true
 }
 ```
@@ -134,7 +134,7 @@ Unknown job id:
 
 ## Example flow with curl
 
-Create the job:
+Successful job:
 
 ```bash
 curl -i \
@@ -154,6 +154,46 @@ Then poll the returned location:
 curl http://localhost:3000/async-status/status/1
 ```
 
+Long-running job to observe `waiting` or `active` before completion:
+
+```bash
+curl -i \
+  -X POST http://localhost:3000/async/save \
+  -H "Content-Type: application/json" \
+  -d '{
+    "data": {
+      "name": "slow-demo",
+      "milliseconds": 10000
+    }
+  }'
+```
+
+Poll immediately after creating it:
+
+```bash
+curl http://localhost:3000/async-status/status/2
+```
+
+Simulated failure:
+
+```bash
+curl -i \
+  -X POST http://localhost:3000/async/save \
+  -H "Content-Type: application/json" \
+  -d '{
+    "data": {
+      "name": "fail:demo",
+      "milliseconds": 500
+    }
+  }'
+```
+
+Then poll the returned location:
+
+```bash
+curl http://localhost:3000/async-status/status/3
+```
+
 ## Tests
 
 ```bash
@@ -169,8 +209,9 @@ npm run test:cov
 
 ## Implementation notes
 
-- BullMQ is configured in [src/modules/async.module.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/src/modules/async.module.ts).
-- The async entrypoint is [src/controllers/async/async.controller.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/src/controllers/async/async.controller.ts).
-- The polling endpoint is [src/controllers/async-status/async-status.controller.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/src/controllers/async-status/async-status.controller.ts).
-- Queue orchestration lives in [src/services/async/async.service.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/src/services/async/async.service.ts).
-- Sample business work lives in [src/services/business/business.service.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/src/services/business/business.service.ts).
+- The reusable async core lives in [src/lib/async/async.module.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/src/lib/async/async.module.ts).
+- The example app wiring lives in [src/example/example-async.module.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/src/example/example-async.module.ts).
+- The example async entrypoint is [src/example/controllers/async.controller.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/src/example/controllers/async.controller.ts).
+- The example polling endpoint is [src/example/controllers/async-status.controller.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/src/example/controllers/async-status.controller.ts).
+- Queue orchestration for the reusable core lives in [src/lib/async/services/async-pattern.service.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/src/lib/async/services/async-pattern.service.ts).
+- Sample business work lives in [src/example/services/business.service.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/src/example/services/business.service.ts).
