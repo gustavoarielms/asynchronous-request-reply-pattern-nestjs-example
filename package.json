@@ -1,16 +1,30 @@
 {
   "name": "asynchronous-request-reply-pattern-nestjs-example",
   "version": "0.0.1",
-  "description": "",
+  "description": "NestJS library for asynchronous request-reply HTTP flows backed by BullMQ and Redis.",
   "author": "",
-  "private": true,
   "license": "UNLICENSED",
+  "main": "dist/lib/async/index.js",
+  "types": "dist/lib/async/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/lib/async/index.d.ts",
+      "require": "./dist/lib/async/index.js",
+      "default": "./dist/lib/async/index.js"
+    }
+  },
+  "files": [
+    "dist/lib/async",
+    "README.md"
+  ],
   "engines": {
     "node": ">=20.11.0"
   },
   "scripts": {
     "build": "nest build",
+    "build:package": "tsc -p tsconfig.package.json",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "pack:dry-run": "npm pack --dry-run",
     "redis:up": "docker compose up -d redis",
     "redis:down": "docker compose down",
     "smoke:example": "node ./scripts/smoke-example.mjs",
@@ -58,6 +72,15 @@
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.5.3"
+  },
+  "peerDependencies": {
+    "@nestjs/bullmq": "^11.0.4",
+    "@nestjs/common": "^11.1.19",
+    "@nestjs/core": "^11.1.19",
+    "bullmq": "^5.74.1",
+    "ioredis": "^5.10.1",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.1"
   },
   "jest": {
     "moduleFileExtensions": [

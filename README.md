@@ -4,6 +4,28 @@ Example NestJS application that implements the [Asynchronous Request-Reply patte
 
 The API accepts a request, enqueues the work, responds with `202 Accepted`, and exposes a polling endpoint to check the job status later.
 
+The repository now also exposes the reusable async core as an npm package entrypoint from [src/lib/async/index.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/src/lib/async/index.ts).
+
+## Package output
+
+The publishable package is built from the reusable library code only:
+
+```bash
+npm run build:package
+npm run pack:dry-run
+```
+
+The package entrypoint resolves to:
+
+- [dist/lib/async/index.js](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/dist/lib/async/index.js)
+- [dist/lib/async/index.d.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/dist/lib/async/index.d.ts)
+
+Typical consumer usage:
+
+```ts
+import { AsyncLibraryModule, Async } from 'asynchronous-request-reply-pattern-nestjs-example';
+```
+
 ## How it works
 
 The flow in this project is:
