@@ -23,8 +23,38 @@ The package entrypoint resolves to:
 Typical consumer usage:
 
 ```ts
-import { AsyncLibraryModule, Async } from 'asynchronous-request-reply-pattern-nestjs-example';
+import { AsyncLibraryModule, Async } from '@gustavoarielms/nestjs-async-request-reply';
 ```
+
+## GitHub Packages
+
+This library is prepared to publish to GitHub Packages as:
+
+```text
+@gustavoarielms/nestjs-async-request-reply
+```
+
+To install it from GitHub Packages, consumers need an `.npmrc` entry for the scope:
+
+```ini
+@gustavoarielms:registry=https://npm.pkg.github.com
+```
+
+Then they can install it with:
+
+```bash
+npm install @gustavoarielms/nestjs-async-request-reply
+```
+
+To publish it manually from this repository:
+
+```bash
+npm login --registry=https://npm.pkg.github.com
+npm run build:package
+npm run publish:github
+```
+
+The repository also includes [publish-package.yml](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/.github/workflows/publish-package.yml), which publishes the package to GitHub Packages when a GitHub Release is published or when the workflow is triggered manually.
 
 ## How it works
 
