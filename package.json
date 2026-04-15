@@ -11,6 +11,9 @@
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "redis:up": "docker compose up -d redis",
+    "redis:down": "docker compose down",
+    "smoke:example": "node ./scripts/smoke-example.mjs",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",

@@ -36,6 +36,18 @@ Optional:
 npm install
 ```
 
+## Local Redis with Docker
+
+```bash
+npm run redis:up
+```
+
+To stop it:
+
+```bash
+npm run redis:down
+```
+
 ## Running the app
 
 ```bash
@@ -50,7 +62,7 @@ npm run build
 npm run start:prod
 ```
 
-The app listens on `http://localhost:3000`.
+The app listens on `http://localhost:3000` by default. You can override it with `PORT`.
 
 ## HTTP contract
 
@@ -203,9 +215,35 @@ npm test -- --runInBand
 # e2e/integration-style tests
 npm run test:e2e -- --runInBand
 
+# full smoke test against the running example flow
+npm run smoke:example
+
 # coverage
 npm run test:cov
 ```
+
+`npm run smoke:example` starts the app on port `3100` by default, sends real HTTP requests to `POST /async/save`, and polls the status endpoint until it validates:
+
+- a successful job
+- a simulated failed job
+- a long-running job that exposes an in-progress state before completion
+
+If you already have the app running elsewhere, you can reuse it:
+
+```bash
+START_APP=false APP_URL=http://127.0.0.1:3000 npm run smoke:example
+```
+
+## CI
+
+The repository includes [example-tests.yml](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/.github/workflows/example-tests.yml), a GitHub Actions workflow that:
+
+- starts Redis as a service
+- installs dependencies
+- runs unit tests
+- runs e2e tests
+- builds the project
+- runs the smoke test against the real example flow
 
 ## Implementation notes
 

@@ -1,0 +1,47 @@
+name: Example Tests
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  example-tests:
+    runs-on: ubuntu-latest
+
+    services:
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.20.2
+          cache: npm
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run unit tests
+        run: npm test -- --runInBand
+
+      - name: Run e2e tests
+        run: npm run test:e2e -- --runInBand
+
+      - name: Build project
+        run: npm run build
+
+      - name: Run example smoke test
+        run: npm run smoke:example
