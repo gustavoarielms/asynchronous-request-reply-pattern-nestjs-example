@@ -1,10 +1,12 @@
 import { spawn } from 'node:child_process';
+import net from 'node:net';
 import process from 'node:process';
 import { setTimeout as delay } from 'node:timers/promises';
 
 const shouldStartApp = process.env.START_APP !== 'false';
-const appPort = Number(process.env.PORT ?? (shouldStartApp ? 3100 : 3000));
-const appUrl = process.env.APP_URL ?? `http://127.0.0.1:${appPort}`;
+const requestedPort = Number(process.env.PORT ?? (shouldStartApp ? 3100 : 3000));
+let appPort = requestedPort;
+let appUrl = process.env.APP_URL ?? `http://127.0.0.1:${appPort}`;
 const startupTimeoutMs = Number(process.env.STARTUP_TIMEOUT_MS ?? 15000);
 const pollIntervalMs = Number(process.env.POLL_INTERVAL_MS ?? 250);
 const terminalTimeoutMs = Number(process.env.TERMINAL_TIMEOUT_MS ?? 30000);
@@ -17,6 +19,51 @@ function log(message) {
 
 function fail(message) {
   throw new Error(message);
+}
+
+async function getAvailablePort(preferredPort) {
+  const server = net.createServer();
+
+  await new Promise((resolve, reject) => {
+    server.once('error', reject);
+    server.listen(preferredPort, resolve);
+  }).catch(async () => {
+    await new Promise((resolve, reject) => {
+      server.removeAllListeners('error');
+      server.once('error', reject);
+      server.listen(0, resolve);
+    });
+  });
+
+  const address = server.address();
+  if (!address || typeof address === 'string') {
+    fail('Unable to determine an available port for the smoke test');
+  }
+
+  const { port } = address;
+  await new Promise((resolve, reject) => server.close((error) => (error ? reject(error) : resolve())));
+  return port;
+}
+
+function waitForExit(childProcess, timeoutMs) {
+  return new Promise((resolve) => {
+    let settled = false;
+
+    const timer = setTimeout(() => {
+      if (!settled) {
+        settled = true;
+        resolve(false);
+      }
+    }, timeoutMs);
+
+    childProcess.once('exit', () => {
+      if (!settled) {
+        settled = true;
+        clearTimeout(timer);
+        resolve(true);
+      }
+    });
+  });
 }
 
 async function waitForServer() {
@@ -141,6 +188,9 @@ async function assertLongRunningCase() {
 
 async function run() {
   if (shouldStartApp) {
+    appPort = await getAvailablePort(requestedPort);
+    appUrl = process.env.APP_URL ?? `http://127.0.0.1:${appPort}`;
+
     appProcess = spawn('npm', ['run', 'start'], {
       env: {
         ...process.env,
@@ -159,9 +209,10 @@ async function run() {
   } finally {
     if (appProcess) {
       appProcess.kill('SIGTERM');
-      await delay(500);
-      if (!appProcess.killed) {
+      const exited = await waitForExit(appProcess, 1000);
+      if (!exited) {
         appProcess.kill('SIGKILL');
+        await waitForExit(appProcess, 1000);
       }
     }
   }
