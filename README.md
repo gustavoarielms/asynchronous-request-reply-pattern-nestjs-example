@@ -18,7 +18,7 @@ The sample business operation waits for the requested number of milliseconds and
 
 ## Prerequisites
 
-- Node.js and npm
+- Node.js 20.11 or newer and npm
 - Redis running locally or reachable from the app
 
 By default the app expects Redis at:
