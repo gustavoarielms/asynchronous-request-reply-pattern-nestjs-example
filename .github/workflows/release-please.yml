@@ -12,10 +12,37 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      packages: write
 
     steps:
       - name: Run release-please
+        id: release
         uses: googleapis/release-please-action@v4
         with:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
+
+      - name: Checkout repository
+        if: ${{ steps.release.outputs.release_created == 'true' }}
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        if: ${{ steps.release.outputs.release_created == 'true' }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.20.2
+          registry-url: https://npm.pkg.github.com
+
+      - name: Install dependencies
+        if: ${{ steps.release.outputs.release_created == 'true' }}
+        run: npm install
+
+      - name: Build package
+        if: ${{ steps.release.outputs.release_created == 'true' }}
+        run: npm run build:package
+
+      - name: Publish to GitHub Packages
+        if: ${{ steps.release.outputs.release_created == 'true' }}
+        run: npm publish --registry=https://npm.pkg.github.com
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
