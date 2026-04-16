@@ -103,6 +103,26 @@ describe('AsyncService', () => {
     });
   });
 
+  it('should return active when BullMQ reports active even if the store still says accepted', async () => {
+    asyncStatusStoreMock.get.mockResolvedValue({
+      status: 'accepted',
+      result: 'Queued',
+      completed: false,
+    });
+    queueMock.getJob.mockResolvedValue({
+      getState: jest.fn().mockResolvedValue('active'),
+      returnvalue: null,
+      failedReason: null,
+    });
+
+    await expect(service.getStatus('123')).resolves.toEqual({
+      status: 'active',
+      result: 'Processing',
+      completed: false,
+    });
+    expect(asyncStatusStoreMock.setActive).toHaveBeenCalledWith('123');
+  });
+
   it('should throw not found when the job does not exist', async () => {
     asyncStatusStoreMock.get.mockResolvedValue(null);
     queueMock.getJob.mockResolvedValue(null);

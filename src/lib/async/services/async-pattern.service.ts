@@ -67,6 +67,11 @@ export class AsyncPatternService implements IAsyncPatternStartProcess, IAsyncPat
 
     if (state === 'active') {
       await this.asyncStatusStore.setActive(jobId);
+      return {
+        status: 'active',
+        result: result || 'Processing',
+        completed: false,
+      };
     }
 
     return storedStatus && storedStatus.status === 'accepted'
