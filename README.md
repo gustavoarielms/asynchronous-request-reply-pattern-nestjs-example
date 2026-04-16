@@ -56,6 +56,20 @@ npm run publish:github
 
 The repository also includes [publish-package.yml](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/.github/workflows/publish-package.yml), which publishes the package to GitHub Packages when a GitHub Release is published or when the workflow is triggered manually.
 
+## Release automation
+
+The repository also includes [release-please.yml](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/.github/workflows/release-please.yml), powered by [release-please](https://github.com/googleapis/release-please).
+
+The intended flow is:
+
+1. merge regular changes into `main`
+2. release-please opens or updates a release PR
+3. merge that release PR
+4. release-please creates the Git tag and GitHub Release
+5. [publish-package.yml](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/.github/workflows/publish-package.yml) publishes the package to GitHub Packages
+
+The initial release manifest lives in [release-please-config.json](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/release-please-config.json) and [.release-please-manifest.json](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/.release-please-manifest.json).
+
 ## How it works
 
 The flow in this project is:
