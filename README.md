@@ -26,6 +26,8 @@ Typical consumer usage:
 import { AsyncLibraryModule, Async } from '@gustavoarielms/nestjs-async-request-reply';
 ```
 
+The package entrypoint is intentionally narrow. It exposes the module, decorator, public response contracts, and DI-facing interfaces and tokens. Internal implementation details such as the interceptor and concrete services stay out of the public API.
+
 ## GitHub Packages
 
 This library is prepared to publish to GitHub Packages as:
