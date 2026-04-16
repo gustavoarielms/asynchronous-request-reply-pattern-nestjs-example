@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.3](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/compare/nestjs-async-request-reply-v0.0.2...nestjs-async-request-reply-v0.0.3) (2026-04-16)
+
+
+### Bug Fixes
+
+* prefer active queue status over accepted store state ([f888cc2](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/commit/f888cc2c922f8881a283d13f106dfe5db8a68b1e))
+* prefer active queue status over accepted store state ([489cfda](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/commit/489cfdaf9d686deacf18dd16663ee73b6a8b8612))
+
 ## [0.0.2](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/compare/nestjs-async-request-reply-v0.0.1...nestjs-async-request-reply-v0.0.2) (2026-04-16)
 
 
