@@ -1,6 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectQueue } from '@nestjs/bullmq';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Queue } from 'bullmq';
+import { ASYNC_PATTERN_QUEUE } from '../async.tokens';
 import { AsyncAcceptedResponse } from '../interfaces/http/async-accepted-response.interface';
 import {
   AsyncCompletedResponse,
@@ -15,7 +15,7 @@ import { AsyncStatusStoreService } from './async-status-store.service';
 @Injectable()
 export class AsyncPatternService implements IAsyncPatternStartProcess, IAsyncPatternGetStatus {
   constructor(
-    @InjectQueue('async') private readonly asyncQueue: Queue<unknown>,
+    @Inject(ASYNC_PATTERN_QUEUE) private readonly asyncQueue: Queue<unknown>,
     private readonly asyncStatusStore: AsyncStatusStoreService
   ) {}
 

@@ -16,7 +16,7 @@ import { BusinessService } from './services/business.service';
         maxRetriesPerRequest: null,
       },
     }),
-    AsyncLibraryModule,
+    AsyncLibraryModule.forRoot(),
   ],
   controllers: [ExampleAsyncController, ExampleAsyncStatusController],
   providers: [
