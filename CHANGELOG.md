@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.4](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/compare/nestjs-async-request-reply-v0.0.3...nestjs-async-request-reply-v0.0.4) (2026-04-17)
+
+
+### Bug Fixes
+
+* align example smoke test with moved app ([5470a54](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/commit/5470a54e124bd9035d4dbd527008f28eb1d04cef))
+
 ## [0.0.3](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/compare/nestjs-async-request-reply-v0.0.2...nestjs-async-request-reply-v0.0.3) (2026-04-16)
 
 
