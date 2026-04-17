@@ -77,12 +77,14 @@ The initial release manifest lives in [release-please-config.json](/Users/gustav
 The flow in this project is:
 
 1. `POST /async/save` receives the request body.
-2. `AsyncInterceptor` validates the presence of `body.data` and delegates to `AsyncPatternService`.
+2. `AsyncInterceptor` extracts the job payload from the request body and delegates to `AsyncPatternService`.
 3. `AsyncPatternService` adds the job to the BullMQ queue and returns a polling location.
 4. `BusinessInteractor` consumes the job in the background.
 5. `GET /async-status/status/:id` returns the current job status.
 
-The sample business operation waits for the requested number of milliseconds and then writes the provided name into `output.txt`.
+In this repository, the example controller uses `@Async({ payloadPath: 'data' })`, so the example request body still wraps the payload under `data`. The library default is more generic: `@Async()` uses the full request body as the enqueued payload.
+
+The sample business operation waits for the requested number of milliseconds and then writes the provided name into `tmp/example-output/output.txt`.
 
 ## Prerequisites
 
@@ -168,7 +170,7 @@ Validation error:
 400 Bad Request
 ```
 
-This happens when the request does not include the `data` field expected by the async interceptor.
+This happens in the example app when the request does not include the `data` field configured via `@Async({ payloadPath: 'data' })`.
 
 ### Check async status
 

@@ -1,19 +1,29 @@
 import { CallHandler, ExecutionContext, INestApplication, NotFoundException } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 import { Test, TestingModule } from '@nestjs/testing';
 import { lastValueFrom } from 'rxjs';
 import { of } from 'rxjs';
 import { ExampleAsyncController } from '../apps/example/src/example/controllers/async.controller';
 import { ExampleAsyncStatusController } from '../apps/example/src/example/controllers/async-status.controller';
 import { ASYNC_PATTERN_GET_STATUS, ASYNC_PATTERN_START_PROCESS } from '../src/lib/async/async.tokens';
+import { Async, ASYNC_OPTIONS } from '../src/lib/async/decorators/async.decorator';
 import { AsyncInterceptor } from '../src/lib/async/interceptors/async.interceptor';
 import { AsyncAcceptedResponse } from '../src/lib/async/interfaces/http/async-accepted-response.interface';
 import { AsyncStatusResponse } from '../src/lib/async/interfaces/http/async-status-response.interface';
+
+class DefaultPayloadController {
+  @Async()
+  handleRequest() {
+    return undefined;
+  }
+}
 
 describe('Async flow integration', () => {
   let app: INestApplication;
   let asyncController: ExampleAsyncController;
   let asyncStatusController: ExampleAsyncStatusController;
   let asyncInterceptor: AsyncInterceptor;
+  let reflector: Reflector;
 
   const asyncPatternStartProcessMock = {
     startProcess: jest.fn<Promise<AsyncAcceptedResponse>, []>(),
@@ -44,6 +54,7 @@ describe('Async flow integration', () => {
     asyncController = moduleFixture.get(ExampleAsyncController);
     asyncStatusController = moduleFixture.get(ExampleAsyncStatusController);
     asyncInterceptor = moduleFixture.get(AsyncInterceptor);
+    reflector = moduleFixture.get(Reflector);
     jest.clearAllMocks();
   });
 
@@ -64,7 +75,8 @@ describe('Async flow integration', () => {
           body: { data: { name: 'job', milliseconds: 10 } },
         }),
       }),
-    } as ExecutionContext;
+      getHandler: () => ExampleAsyncController.prototype.handleRequest,
+    } as unknown as ExecutionContext;
 
     const next = {
       handle: () => of(null),
@@ -77,6 +89,41 @@ describe('Async flow integration', () => {
       location: '/async-status/status/123',
     });
     expect(asyncController).toBeDefined();
+    expect(asyncPatternStartProcessMock.startProcess).toHaveBeenCalledWith({
+      name: 'job',
+      milliseconds: 10,
+    });
+    expect(
+      reflector.get(ASYNC_OPTIONS, ExampleAsyncController.prototype.handleRequest)
+    ).toEqual({ payloadPath: 'data' });
+  });
+
+  it('uses the whole body as payload when no payloadPath is configured', async () => {
+    asyncPatternStartProcessMock.startProcess.mockResolvedValue({
+      status: 'accepted',
+      location: '/async-status/status/456',
+    });
+
+    const context = {
+      switchToHttp: () => ({
+        getRequest: () => ({
+          method: 'POST',
+          body: { name: 'job', milliseconds: 10 },
+        }),
+      }),
+      getHandler: () => DefaultPayloadController.prototype.handleRequest,
+    } as unknown as ExecutionContext;
+
+    const next = {
+      handle: () => of(null),
+    } as CallHandler;
+
+    const response$ = await asyncInterceptor.intercept(context, next);
+
+    await expect(lastValueFrom(response$)).resolves.toEqual({
+      status: 'accepted',
+      location: '/async-status/status/456',
+    });
     expect(asyncPatternStartProcessMock.startProcess).toHaveBeenCalledWith({
       name: 'job',
       milliseconds: 10,
