@@ -172,6 +172,73 @@ AsyncLibraryModule.forRoot({
 })
 ```
 
+## Host background worker contract
+
+The library does not implement any business worker for you. It only:
+
+- accepts the HTTP request
+- enqueues the payload in BullMQ
+- tracks job status
+- optionally exposes the polling endpoint
+
+The consuming application is still responsible for the background processor that handles the queued work.
+
+At minimum, the host application must provide:
+
+1. a BullMQ worker bound to the same queue name used by `AsyncLibraryModule.forRoot(...)`
+2. business logic that processes `job.data`
+3. if it does not use the library status controller, its own HTTP status endpoint
+
+The example app does exactly that:
+
+- [apps/example/src/example/example-async.module.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/apps/example/src/example/example-async.module.ts) configures BullMQ and imports `AsyncLibraryModule`
+- [apps/example/src/example/interactors/business.interactor.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/apps/example/src/example/interactors/business.interactor.ts) is the BullMQ worker
+- [apps/example/src/example/services/business.service.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/apps/example/src/example/services/business.service.ts) contains the example business logic
+
+Minimal host-side processor example:
+
+```ts
+import { Inject, Injectable } from '@nestjs/common';
+import { Processor, WorkerHost } from '@nestjs/bullmq';
+import { Job } from 'bullmq';
+
+export interface OrdersService {
+  createOrder(data: unknown): Promise<string>;
+}
+
+@Processor('async')
+@Injectable()
+export class OrdersProcessor extends WorkerHost {
+  constructor(
+    @Inject('OrdersService')
+    private readonly ordersService: OrdersService
+  ) {
+    super();
+  }
+
+  process(job: Job<unknown, string>): Promise<string> {
+    return this.ordersService.createOrder(job.data);
+  }
+}
+```
+
+If the host changes the queue name, it must keep both sides aligned:
+
+```ts
+AsyncLibraryModule.forRoot({
+  queueName: 'orders',
+})
+```
+
+```ts
+@Processor('orders')
+export class OrdersProcessor extends WorkerHost {
+  // ...
+}
+```
+
+In short: the library owns the async HTTP pattern and status contract; the host application owns the actual background business work.
+
 By default, the decorator only allows `POST`, `PUT`, and `PATCH`. Exceptional cases such as `GET` must be enabled explicitly with `allowMethods`, for example `@Async({ allowMethods: ['GET'] })`.
 
 Exceptional legacy case only. Do not use this pattern for new endpoints:
