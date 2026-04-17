@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.0.6](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/compare/nestjs-async-request-reply-v0.0.5...nestjs-async-request-reply-v0.0.6) (2026-04-17)
+
+
+### Features
+
+* add optional status controller ([e7749dc](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/commit/e7749dc1f0fc2cc1a897aee469c5f959c7ae8ebe))
+* add optional status controller ([c41cf18](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/commit/c41cf189e5c7b91e3024644000a23d87f0e4e7fe))
+
+
+### Bug Fixes
+
+* make accepted location explicit ([bbdf1a9](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/commit/bbdf1a9ef6f91152f835f3e994ce06bec2722d94))
+
 ## [0.0.5](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/compare/nestjs-async-request-reply-v0.0.4...nestjs-async-request-reply-v0.0.5) (2026-04-17)
 
 
