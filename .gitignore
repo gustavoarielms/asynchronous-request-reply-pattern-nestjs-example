@@ -131,3 +131,6 @@ dist
 
 # macOS Finder metadata
 .DS_Store
+
+# Example app runtime artifacts
+tmp/example-output/
