@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { getQueueToken } from '@nestjs/bullmq';
 import { NotFoundException } from '@nestjs/common';
+import { ASYNC_PATTERN_QUEUE } from '../../lib/async/async.tokens';
 import { AsyncPatternService } from '../../lib/async/services/async-pattern.service';
 import { AsyncStatusStoreService } from '../../lib/async/services/async-status-store.service';
 
@@ -27,7 +27,7 @@ describe('AsyncService', () => {
           useValue: asyncStatusStoreMock,
         },
         {
-          provide: getQueueToken('async'),
+          provide: ASYNC_PATTERN_QUEUE,
           useValue: queueMock,
         },
       ],
