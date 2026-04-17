@@ -1,7 +1,8 @@
 import { Inject } from '@nestjs/common';
 import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Job } from 'bullmq';
-import { AsyncStatusStoreService } from '../../../../../src/lib/async/services/async-status-store.service';
+import { ASYNC_STATUS_STORE } from '../../../../../src/lib/async/async.tokens';
+import { IAsyncStatusStore } from '../../../../../src/lib/async/interfaces/services/async-status-store.interface';
 import { AsyncRequestData } from '../interfaces/http/async-request-body.interface';
 import { IBusinessService } from '../interfaces/services/business-service.interface';
 
@@ -9,7 +10,7 @@ import { IBusinessService } from '../interfaces/services/business-service.interf
 export class BusinessInteractor extends WorkerHost {
   constructor(
     @Inject('IBusinessService') private readonly businessService: IBusinessService,
-    private readonly asyncStatusStore: AsyncStatusStoreService
+    @Inject(ASYNC_STATUS_STORE) private readonly asyncStatusStore: IAsyncStatusStore
   ) {
     super();
   }

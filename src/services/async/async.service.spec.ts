@@ -4,9 +4,9 @@ import {
   ASYNC_JOB_NAME,
   ASYNC_PATTERN_QUEUE,
   ASYNC_STATUS_LOCATION_BASE_PATH,
+  ASYNC_STATUS_STORE,
 } from '../../lib/async/async.tokens';
 import { AsyncPatternService } from '../../lib/async/services/async-pattern.service';
-import { AsyncStatusStoreService } from '../../lib/async/services/async-status-store.service';
 
 describe('AsyncService', () => {
   let service: AsyncPatternService;
@@ -27,7 +27,7 @@ describe('AsyncService', () => {
       providers: [
         AsyncPatternService,
         {
-          provide: AsyncStatusStoreService,
+          provide: ASYNC_STATUS_STORE,
           useValue: asyncStatusStoreMock,
         },
         {
@@ -74,7 +74,7 @@ describe('AsyncService', () => {
       providers: [
         AsyncPatternService,
         {
-          provide: AsyncStatusStoreService,
+          provide: ASYNC_STATUS_STORE,
           useValue: asyncStatusStoreMock,
         },
         {
@@ -106,7 +106,7 @@ describe('AsyncService', () => {
       providers: [
         AsyncPatternService,
         {
-          provide: AsyncStatusStoreService,
+          provide: ASYNC_STATUS_STORE,
           useValue: asyncStatusStoreMock,
         },
         {
@@ -137,7 +137,7 @@ describe('AsyncService', () => {
       providers: [
         AsyncPatternService,
         {
-          provide: AsyncStatusStoreService,
+          provide: ASYNC_STATUS_STORE,
           useValue: asyncStatusStoreMock,
         },
         {

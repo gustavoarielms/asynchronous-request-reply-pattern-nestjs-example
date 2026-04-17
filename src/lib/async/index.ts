@@ -8,3 +8,4 @@ export * from './interfaces/http/async-accepted-response.interface';
 export * from './interfaces/http/async-status-response.interface';
 export * from './interfaces/services/async-pattern-get-status.interface';
 export * from './interfaces/services/async-pattern-start-process.interface';
+export * from './interfaces/services/async-status-store.interface';

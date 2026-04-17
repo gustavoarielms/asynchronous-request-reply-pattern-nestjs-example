@@ -56,6 +56,7 @@ In other words:
 - `AsyncLibraryModule.forRoot(...)` belongs to the library and registers its queue wiring, services, and defaults.
 - The library does not create or own the global BullMQ/Redis connection by itself.
 - `jobName` controls the BullMQ job name used when the library enqueues work.
+- The library uses a status store contract internally and ships a Redis-backed implementation by default.
 
 ## GitHub Packages
 
@@ -184,6 +185,50 @@ The library does not implement any business worker for you. It only:
 - optionally exposes the polling endpoint
 
 The consuming application is still responsible for the background processor that handles the queued work.
+
+The status persistence layer is also explicit in the library contract:
+
+- token: `ASYNC_STATUS_STORE`
+- interface: `IAsyncStatusStore`
+- default implementation: Redis-backed, reusing the BullMQ connection already configured by the host app
+
+Most consumers should keep that default. If they need a different backing store, they can replace it with their own injectable class:
+
+```ts
+import { Injectable } from '@nestjs/common';
+import {
+  AsyncLibraryModule,
+  AsyncStatusResponse,
+  IAsyncStatusStore,
+} from '@gustavoarielms/nestjs-async-request-reply';
+
+@Injectable()
+export class CustomStatusStore implements IAsyncStatusStore {
+  get(_jobId: string): Promise<AsyncStatusResponse | null> {
+    throw new Error('Not implemented');
+  }
+
+  setAccepted(_jobId: string): Promise<void> {
+    throw new Error('Not implemented');
+  }
+
+  setActive(_jobId: string): Promise<void> {
+    throw new Error('Not implemented');
+  }
+
+  setCompleted(_jobId: string, _result: string): Promise<void> {
+    throw new Error('Not implemented');
+  }
+
+  setFailed(_jobId: string, _result: string): Promise<void> {
+    throw new Error('Not implemented');
+  }
+}
+
+AsyncLibraryModule.forRoot({
+  statusStoreClass: CustomStatusStore,
+})
+```
 
 At minimum, the host application must provide:
 
