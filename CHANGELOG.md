@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.5](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/compare/nestjs-async-request-reply-v0.0.4...nestjs-async-request-reply-v0.0.5) (2026-04-17)
+
+
+### Features
+
+* add async module configuration options ([a329936](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/commit/a329936e66a56a0d54a52e3c34cf62ef13feebed))
+* add async module configuration options ([4ef7ccf](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/commit/4ef7ccfbc08606de1e21d0e628c9546f037327a2))
+
 ## [0.0.4](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/compare/nestjs-async-request-reply-v0.0.3...nestjs-async-request-reply-v0.0.4) (2026-04-17)
 
 
