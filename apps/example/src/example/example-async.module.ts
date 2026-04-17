@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bullmq';
 import { AsyncLibraryModule } from '../../../../src/lib/async/async.module';
 import { ExampleAsyncController } from './controllers/async.controller';
-import { ExampleAsyncStatusController } from './controllers/async-status.controller';
 import { BusinessInteractor } from './interactors/business.interactor';
 import { BusinessService } from './services/business.service';
 
@@ -16,9 +15,11 @@ import { BusinessService } from './services/business.service';
         maxRetriesPerRequest: null,
       },
     }),
-    AsyncLibraryModule.forRoot(),
+    AsyncLibraryModule.forRoot({
+      exposeStatusController: true,
+    }),
   ],
-  controllers: [ExampleAsyncController, ExampleAsyncStatusController],
+  controllers: [ExampleAsyncController],
   providers: [
     BusinessService,
     {

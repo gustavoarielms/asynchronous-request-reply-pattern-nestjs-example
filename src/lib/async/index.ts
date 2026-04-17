@@ -1,6 +1,7 @@
 export * from './async.module';
 export * from './async.tokens';
 export * from './decorators/async.decorator';
+export * from './controllers/async-status.controller';
 export * from './interfaces/async-module-options.interface';
 export * from './interfaces/async-options.interface';
 export * from './interfaces/http/async-accepted-response.interface';

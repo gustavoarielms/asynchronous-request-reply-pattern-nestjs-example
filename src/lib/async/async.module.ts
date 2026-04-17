@@ -5,14 +5,19 @@ import {
   ASYNC_PATTERN_GET_STATUS,
   ASYNC_PATTERN_QUEUE,
   ASYNC_PATTERN_START_PROCESS,
+  ASYNC_STATUS_BASE_PATH,
 } from './async.tokens';
 import { AsyncModuleOptions } from './interfaces/async-module-options.interface';
+import { createAsyncStatusController } from './controllers/async-status.controller';
 import { AsyncPatternService } from './services/async-pattern.service';
 import { AsyncStatusStoreService } from './services/async-status-store.service';
+import { normalizeStatusBasePath } from './utils/async-status-path.util';
 
 const DEFAULT_ASYNC_MODULE_OPTIONS: Required<AsyncModuleOptions> = {
   queueName: 'async',
   defaultAllowedMethods: ['POST', 'PUT', 'PATCH'],
+  exposeStatusController: false,
+  statusBasePath: 'async-status',
 };
 
 @Module({})
@@ -21,7 +26,14 @@ export class AsyncLibraryModule {
     const resolvedOptions: Required<AsyncModuleOptions> = {
       ...DEFAULT_ASYNC_MODULE_OPTIONS,
       ...options,
+      statusBasePath: normalizeStatusBasePath(
+        options.statusBasePath ?? DEFAULT_ASYNC_MODULE_OPTIONS.statusBasePath
+      ),
     };
+
+    const statusController = resolvedOptions.exposeStatusController
+      ? createAsyncStatusController(resolvedOptions.statusBasePath)
+      : null;
 
     return {
       module: AsyncLibraryModule,
@@ -34,6 +46,10 @@ export class AsyncLibraryModule {
         {
           provide: ASYNC_MODULE_OPTIONS,
           useValue: resolvedOptions,
+        },
+        {
+          provide: ASYNC_STATUS_BASE_PATH,
+          useValue: resolvedOptions.statusBasePath,
         },
         {
           provide: ASYNC_PATTERN_QUEUE,
@@ -52,11 +68,13 @@ export class AsyncLibraryModule {
       ],
       exports: [
         ASYNC_MODULE_OPTIONS,
+        ASYNC_STATUS_BASE_PATH,
         AsyncPatternService,
         AsyncStatusStoreService,
         ASYNC_PATTERN_GET_STATUS,
         ASYNC_PATTERN_START_PROCESS,
       ],
+      controllers: statusController ? [statusController] : [],
     };
   }
 }
