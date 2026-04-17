@@ -5,4 +5,5 @@ export interface AsyncModuleOptions {
   defaultAllowedMethods?: AsyncAllowedMethod[];
   exposeStatusController?: boolean;
   statusBasePath?: string;
+  statusLocationBasePath?: string;
 }

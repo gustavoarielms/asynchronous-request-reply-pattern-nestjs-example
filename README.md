@@ -95,6 +95,23 @@ AsyncLibraryModule.forRoot({
 
 That keeps the polling endpoint in the reusable core instead of duplicating a controller in each host app.
 
+If `exposeStatusController` is `false`, the library does not register any polling route. In that case, `location` is only returned when the host application configures a public path explicitly:
+
+```ts
+AsyncLibraryModule.forRoot({
+  exposeStatusController: false,
+  statusLocationBasePath: 'jobs',
+})
+```
+
+If neither the default controller nor a `statusLocationBasePath` is configured, the accepted response contains only:
+
+```json
+{
+  "status": "accepted"
+}
+```
+
 By default, the decorator only allows `POST`, `PUT`, and `PATCH`. Exceptional cases such as `GET` must be enabled explicitly with `allowMethods`, for example `@Async({ allowMethods: ['GET'] })`.
 
 Exceptional legacy case only. Do not use this pattern for new endpoints:

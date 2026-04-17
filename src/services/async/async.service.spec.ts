@@ -1,6 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
-import { ASYNC_PATTERN_QUEUE, ASYNC_STATUS_BASE_PATH } from '../../lib/async/async.tokens';
+import {
+  ASYNC_PATTERN_QUEUE,
+  ASYNC_STATUS_LOCATION_BASE_PATH,
+} from '../../lib/async/async.tokens';
 import { AsyncPatternService } from '../../lib/async/services/async-pattern.service';
 import { AsyncStatusStoreService } from '../../lib/async/services/async-status-store.service';
 
@@ -31,7 +34,7 @@ describe('AsyncService', () => {
           useValue: queueMock,
         },
         {
-          provide: ASYNC_STATUS_BASE_PATH,
+          provide: ASYNC_STATUS_LOCATION_BASE_PATH,
           useValue: 'async-status',
         },
       ],
@@ -74,7 +77,7 @@ describe('AsyncService', () => {
           useValue: queueMock,
         },
         {
-          provide: ASYNC_STATUS_BASE_PATH,
+          provide: ASYNC_STATUS_LOCATION_BASE_PATH,
           useValue: 'jobs',
         },
       ],
@@ -86,6 +89,33 @@ describe('AsyncService', () => {
     await expect(service.startProcess({ task: 'job' })).resolves.toEqual({
       status: 'accepted',
       location: '/jobs/status/321',
+    });
+  });
+
+  it('should omit location when no public status endpoint is configured', async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        AsyncPatternService,
+        {
+          provide: AsyncStatusStoreService,
+          useValue: asyncStatusStoreMock,
+        },
+        {
+          provide: ASYNC_PATTERN_QUEUE,
+          useValue: queueMock,
+        },
+        {
+          provide: ASYNC_STATUS_LOCATION_BASE_PATH,
+          useValue: '',
+        },
+      ],
+    }).compile();
+
+    service = module.get<AsyncPatternService>(AsyncPatternService);
+    queueMock.add.mockResolvedValue({ id: '654' });
+
+    await expect(service.startProcess({ task: 'job' })).resolves.toEqual({
+      status: 'accepted',
     });
   });
 
