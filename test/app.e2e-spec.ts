@@ -2,8 +2,8 @@ import { CallHandler, ExecutionContext, INestApplication, NotFoundException } fr
 import { Test, TestingModule } from '@nestjs/testing';
 import { lastValueFrom } from 'rxjs';
 import { of } from 'rxjs';
-import { ExampleAsyncController } from '../src/example/controllers/async.controller';
-import { ExampleAsyncStatusController } from '../src/example/controllers/async-status.controller';
+import { ExampleAsyncController } from '../apps/example/src/example/controllers/async.controller';
+import { ExampleAsyncStatusController } from '../apps/example/src/example/controllers/async-status.controller';
 import { ASYNC_PATTERN_GET_STATUS, ASYNC_PATTERN_START_PROCESS } from '../src/lib/async/async.tokens';
 import { AsyncInterceptor } from '../src/lib/async/interceptors/async.interceptor';
 import { AsyncAcceptedResponse } from '../src/lib/async/interfaces/http/async-accepted-response.interface';

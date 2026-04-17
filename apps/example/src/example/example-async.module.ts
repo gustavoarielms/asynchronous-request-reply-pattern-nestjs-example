@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bullmq';
-import { AsyncLibraryModule } from '../lib/async/async.module';
+import { AsyncLibraryModule } from '../../../../src/lib/async/async.module';
 import { ExampleAsyncController } from './controllers/async.controller';
 import { ExampleAsyncStatusController } from './controllers/async-status.controller';
 import { BusinessInteractor } from './interactors/business.interactor';

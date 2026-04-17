@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AsyncRequestData } from '../../lib/async/interfaces/http/async-request-body.interface';
+import { AsyncRequestData } from '../../../../../src/lib/async/interfaces/http/async-request-body.interface';
 import { IBusinessService } from '../interfaces/services/business-service.interface';
 import * as fs from 'fs';
 import * as path from 'path';

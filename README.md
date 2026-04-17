@@ -316,8 +316,8 @@ The repository includes [example-tests.yml](/Users/gustavo/Patxa/asynchronous-re
 ## Implementation notes
 
 - The reusable async core lives in [src/lib/async/async.module.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/src/lib/async/async.module.ts).
-- The example app wiring lives in [src/example/example-async.module.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/src/example/example-async.module.ts).
-- The example async entrypoint is [src/example/controllers/async.controller.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/src/example/controllers/async.controller.ts).
-- The example polling endpoint is [src/example/controllers/async-status.controller.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/src/example/controllers/async-status.controller.ts).
+- The example app wiring lives in [apps/example/src/example/example-async.module.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/apps/example/src/example/example-async.module.ts).
+- The example async entrypoint is [apps/example/src/example/controllers/async.controller.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/apps/example/src/example/controllers/async.controller.ts).
+- The example polling endpoint is [apps/example/src/example/controllers/async-status.controller.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/apps/example/src/example/controllers/async-status.controller.ts).
 - Queue orchestration for the reusable core lives in [src/lib/async/services/async-pattern.service.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/src/lib/async/services/async-pattern.service.ts).
-- Sample business work lives in [src/example/services/business.service.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/src/example/services/business.service.ts).
+- Sample business work lives in [apps/example/src/example/services/business.service.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/apps/example/src/example/services/business.service.ts).
