@@ -112,6 +112,39 @@ If neither the default controller nor a `statusLocationBasePath` is configured, 
 }
 ```
 
+When `exposeStatusController` is `false`, the host application is responsible for exposing its own polling endpoint if it wants HTTP status lookup. A minimal controller looks like this:
+
+```ts
+import { Controller, Get, Inject, Param } from '@nestjs/common';
+import {
+  ASYNC_PATTERN_GET_STATUS,
+  AsyncStatusResponse,
+  IAsyncPatternGetStatus,
+} from '@gustavoarielms/nestjs-async-request-reply';
+
+@Controller('jobs')
+export class JobsStatusController {
+  constructor(
+    @Inject(ASYNC_PATTERN_GET_STATUS)
+    private readonly asyncStatus: IAsyncPatternGetStatus
+  ) {}
+
+  @Get('status/:id')
+  getStatus(@Param('id') id: string): Promise<AsyncStatusResponse> {
+    return this.asyncStatus.getStatus(id);
+  }
+}
+```
+
+If the host exposes that route publicly, it should also set the matching `statusLocationBasePath`:
+
+```ts
+AsyncLibraryModule.forRoot({
+  exposeStatusController: false,
+  statusLocationBasePath: 'jobs',
+})
+```
+
 By default, the decorator only allows `POST`, `PUT`, and `PATCH`. Exceptional cases such as `GET` must be enabled explicitly with `allowMethods`, for example `@Async({ allowMethods: ['GET'] })`.
 
 Exceptional legacy case only. Do not use this pattern for new endpoints:
