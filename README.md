@@ -86,6 +86,19 @@ In this repository, the example controller uses `@Async({ payloadPath: 'data' })
 
 By default, the decorator only allows `POST`, `PUT`, and `PATCH`. Exceptional cases such as `GET` must be enabled explicitly with `allowMethods`, for example `@Async({ allowMethods: ['GET'] })`.
 
+Exceptional legacy case only. Do not use this pattern for new endpoints:
+
+```ts
+// Exceptional legacy case only. Do not use this pattern for new endpoints.
+@Get('legacy-report')
+@Async({ allowMethods: ['GET'], payloadPath: 'query' })
+getLegacyReport(@Query() _query: Record<string, string>) {
+  return undefined;
+}
+```
+
+That kind of endpoint should be treated as an exception or legacy-compatibility escape hatch when you are stuck with an inherited or poorly designed contract that cannot be changed easily. In general, async work that enqueues jobs and changes backend state should use `POST`, `PUT`, or `PATCH`, not `GET`.
+
 The sample business operation waits for the requested number of milliseconds and then writes the provided name into `tmp/example-output/output.txt`.
 
 ## Prerequisites
