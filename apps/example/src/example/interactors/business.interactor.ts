@@ -1,8 +1,8 @@
 import { Inject } from '@nestjs/common';
 import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Job } from 'bullmq';
-import { AsyncRequestData } from '../../../../../src/lib/async/interfaces/http/async-request-body.interface';
 import { AsyncStatusStoreService } from '../../../../../src/lib/async/services/async-status-store.service';
+import { AsyncRequestData } from '../interfaces/http/async-request-body.interface';
 import { IBusinessService } from '../interfaces/services/business-service.interface';
 
 @Processor('async')

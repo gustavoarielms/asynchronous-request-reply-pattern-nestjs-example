@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
-import { AsyncRequestData } from '../interfaces/http/async-request-body.interface';
 import { AsyncStatusResponse } from '../interfaces/http/async-status-response.interface';
 
 const STATUS_KEY_PREFIX = 'async:status';
@@ -10,7 +9,7 @@ const STATUS_TTL_SECONDS = 60 * 60 * 24;
 @Injectable()
 export class AsyncStatusStoreService {
   constructor(
-    @InjectQueue('async') private readonly asyncQueue: Queue<AsyncRequestData>
+    @InjectQueue('async') private readonly asyncQueue: Queue<unknown>
   ) {}
 
   async get(jobId: string): Promise<AsyncStatusResponse | null> {
