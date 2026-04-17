@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ASYNC_PATTERN_START_PROCESS } from '../../lib/async/async.tokens';
 import { AsyncInterceptor } from '../../lib/async/interceptors/async.interceptor';
-import { ExampleAsyncController } from '../../example/controllers/async.controller';
+import { ExampleAsyncController } from '../../../apps/example/src/example/controllers/async.controller';
 
 describe('AsyncController', () => {
   let controller: ExampleAsyncController;

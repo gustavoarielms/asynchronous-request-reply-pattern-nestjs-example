@@ -1,7 +1,7 @@
 import { Controller, Get, Inject, Param } from '@nestjs/common';
-import { ASYNC_PATTERN_GET_STATUS } from '../../lib/async/async.tokens';
-import { AsyncStatusResponse } from '../../lib/async/interfaces/http/async-status-response.interface';
-import { IAsyncPatternGetStatus } from '../../lib/async/interfaces/services/async-pattern-get-status.interface';
+import { ASYNC_PATTERN_GET_STATUS } from '../../../../../src/lib/async/async.tokens';
+import { AsyncStatusResponse } from '../../../../../src/lib/async/interfaces/http/async-status-response.interface';
+import { IAsyncPatternGetStatus } from '../../../../../src/lib/async/interfaces/services/async-pattern-get-status.interface';
 
 @Controller('async-status')
 export class ExampleAsyncStatusController {
