@@ -4,6 +4,8 @@ import { IBusinessService } from '../interfaces/services/business-service.interf
 import * as fs from 'fs';
 import * as path from 'path';
 
+const EXAMPLE_OUTPUT_DIR = path.join(process.cwd(), 'tmp', 'example-output');
+
 @Injectable()
 export class BusinessService implements IBusinessService {
   async save(data: AsyncRequestData): Promise<string> {
@@ -14,7 +16,8 @@ export class BusinessService implements IBusinessService {
       throw new Error(`Simulated example failure for ${data.name}`);
     }
 
-    const filePath = path.join(__dirname, 'output.txt');
+    fs.mkdirSync(EXAMPLE_OUTPUT_DIR, { recursive: true });
+    const filePath = path.join(EXAMPLE_OUTPUT_DIR, 'output.txt');
     console.log(data.name);
     fs.writeFileSync(filePath, data.name);
     return `Processed data: ${data.name}`;

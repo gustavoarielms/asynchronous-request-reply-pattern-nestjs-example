@@ -208,7 +208,7 @@ async function run() {
     appPort = await getAvailablePort(requestedPort);
     appUrl = process.env.APP_URL ?? `http://127.0.0.1:${appPort}`;
 
-    appProcess = spawn('npm', ['run', 'start'], {
+    appProcess = spawn('npm', ['run', 'start:prod'], {
       env: {
         ...process.env,
         PORT: String(appPort),
