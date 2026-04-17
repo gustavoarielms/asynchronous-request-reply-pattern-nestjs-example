@@ -4,6 +4,7 @@ import {
   ExecutionContext,
   Inject,
   Injectable,
+  MethodNotAllowedException,
   NestInterceptor,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
@@ -13,6 +14,8 @@ import { ASYNC_OPTIONS } from '../decorators/async.decorator';
 import { AsyncAcceptedResponse } from '../interfaces/http/async-accepted-response.interface';
 import { AsyncOptions } from '../interfaces/async-options.interface';
 import { IAsyncPatternStartProcess } from '../interfaces/services/async-pattern-start-process.interface';
+
+const DEFAULT_ALLOWED_METHODS = ['POST', 'PUT', 'PATCH'] as const;
 
 @Injectable()
 export class AsyncInterceptor implements NestInterceptor {
@@ -30,23 +33,28 @@ export class AsyncInterceptor implements NestInterceptor {
       .switchToHttp()
       .getRequest<{ method: string; body?: unknown }>();
 
-    if (request.method !== 'GET') {
-      const options =
-        this.reflector.get<AsyncOptions>(ASYNC_OPTIONS, context.getHandler()) ?? {};
-      const payload = this.resolvePayload(request.body, options.payloadPath);
+    const options =
+      this.reflector.get<AsyncOptions>(ASYNC_OPTIONS, context.getHandler()) ?? {};
+    const method = request.method?.toUpperCase();
+    const allowedMethods = options.allowMethods ?? [...DEFAULT_ALLOWED_METHODS];
 
-      if (payload !== undefined) {
-        return of(await this.asyncService.startProcess(payload));
-      }
-
-      throw new BadRequestException(
-        options.payloadPath
-          ? `Payload field "${options.payloadPath}" is required`
-          : 'Request body is required'
+    if (!allowedMethods.includes(method as (typeof DEFAULT_ALLOWED_METHODS)[number])) {
+      throw new MethodNotAllowedException(
+        `@Async() is only supported for methods ${allowedMethods.join(', ')}`
       );
     }
 
-    return next.handle();
+    const payload = this.resolvePayload(request.body, options.payloadPath);
+
+    if (payload !== undefined) {
+      return of(await this.asyncService.startProcess(payload));
+    }
+
+    throw new BadRequestException(
+      options.payloadPath
+        ? `Payload field "${options.payloadPath}" is required`
+        : 'Request body is required'
+    );
   }
 
   private resolvePayload(body: unknown, payloadPath?: string): unknown {

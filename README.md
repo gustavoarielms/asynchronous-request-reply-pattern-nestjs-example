@@ -84,6 +84,8 @@ The flow in this project is:
 
 In this repository, the example controller uses `@Async({ payloadPath: 'data' })`, so the example request body still wraps the payload under `data`. The library default is more generic: `@Async()` uses the full request body as the enqueued payload.
 
+By default, the decorator only allows `POST`, `PUT`, and `PATCH`. Exceptional cases such as `GET` must be enabled explicitly with `allowMethods`, for example `@Async({ allowMethods: ['GET'] })`.
+
 The sample business operation waits for the requested number of milliseconds and then writes the provided name into `tmp/example-output/output.txt`.
 
 ## Prerequisites
