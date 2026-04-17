@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.7](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/compare/nestjs-async-request-reply-v0.0.6...nestjs-async-request-reply-v0.0.7) (2026-04-17)
+
+
+### Features
+
+* make async job name configurable ([395d951](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/commit/395d95135d6491e65fab1c552ef4eb17d6bf6592))
+* make async job name configurable ([3046f76](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/commit/3046f7634987a1e4cdfdc8aaa5992306c1bad08a))
+
 ## [0.0.6](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/compare/nestjs-async-request-reply-v0.0.5...nestjs-async-request-reply-v0.0.6) (2026-04-17)
 
 
