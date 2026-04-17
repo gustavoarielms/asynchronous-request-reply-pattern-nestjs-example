@@ -1,6 +1,7 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Queue } from 'bullmq';
 import {
+  ASYNC_JOB_NAME,
   ASYNC_PATTERN_QUEUE,
   ASYNC_STATUS_LOCATION_BASE_PATH,
 } from '../async.tokens';
@@ -20,12 +21,13 @@ import { buildStatusLocation } from '../utils/async-status-path.util';
 export class AsyncPatternService implements IAsyncPatternStartProcess, IAsyncPatternGetStatus {
   constructor(
     @Inject(ASYNC_PATTERN_QUEUE) private readonly asyncQueue: Queue<unknown>,
+    @Inject(ASYNC_JOB_NAME) private readonly jobName: string,
     private readonly asyncStatusStore: AsyncStatusStoreService,
     @Inject(ASYNC_STATUS_LOCATION_BASE_PATH) private readonly statusLocationBasePath: string
   ) {}
 
   async startProcess(data: unknown): Promise<AsyncAcceptedResponse> {
-    const job = await this.asyncQueue.add('processJob', data);
+    const job = await this.asyncQueue.add(this.jobName, data);
     await this.asyncStatusStore.setAccepted(String(job.id));
 
     const response: AsyncAcceptedResponse = {

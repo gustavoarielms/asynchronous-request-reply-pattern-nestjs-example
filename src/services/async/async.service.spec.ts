@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
 import {
+  ASYNC_JOB_NAME,
   ASYNC_PATTERN_QUEUE,
   ASYNC_STATUS_LOCATION_BASE_PATH,
 } from '../../lib/async/async.tokens';
@@ -32,6 +33,10 @@ describe('AsyncService', () => {
         {
           provide: ASYNC_PATTERN_QUEUE,
           useValue: queueMock,
+        },
+        {
+          provide: ASYNC_JOB_NAME,
+          useValue: 'processJob',
         },
         {
           provide: ASYNC_STATUS_LOCATION_BASE_PATH,
@@ -77,6 +82,10 @@ describe('AsyncService', () => {
           useValue: queueMock,
         },
         {
+          provide: ASYNC_JOB_NAME,
+          useValue: 'processJob',
+        },
+        {
           provide: ASYNC_STATUS_LOCATION_BASE_PATH,
           useValue: 'jobs',
         },
@@ -105,6 +114,10 @@ describe('AsyncService', () => {
           useValue: queueMock,
         },
         {
+          provide: ASYNC_JOB_NAME,
+          useValue: 'processJob',
+        },
+        {
           provide: ASYNC_STATUS_LOCATION_BASE_PATH,
           useValue: '',
         },
@@ -116,6 +129,39 @@ describe('AsyncService', () => {
 
     await expect(service.startProcess({ task: 'job' })).resolves.toEqual({
       status: 'accepted',
+    });
+  });
+
+  it('should enqueue using the configured job name', async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        AsyncPatternService,
+        {
+          provide: AsyncStatusStoreService,
+          useValue: asyncStatusStoreMock,
+        },
+        {
+          provide: ASYNC_PATTERN_QUEUE,
+          useValue: queueMock,
+        },
+        {
+          provide: ASYNC_JOB_NAME,
+          useValue: 'orders.create',
+        },
+        {
+          provide: ASYNC_STATUS_LOCATION_BASE_PATH,
+          useValue: '',
+        },
+      ],
+    }).compile();
+
+    service = module.get<AsyncPatternService>(AsyncPatternService);
+    queueMock.add.mockResolvedValue({ id: '999' });
+
+    await service.startProcess({ orderId: '123' });
+
+    expect(queueMock.add).toHaveBeenCalledWith('orders.create', {
+      orderId: '123',
     });
   });
 

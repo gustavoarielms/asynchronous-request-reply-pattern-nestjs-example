@@ -46,6 +46,7 @@ The library module sits on top of that global BullMQ setup:
 ```ts
 AsyncLibraryModule.forRoot({
   queueName: 'async',
+  jobName: 'processJob',
 })
 ```
 
@@ -54,6 +55,7 @@ In other words:
 - `BullModule.forRoot(...)` belongs to the consuming application and owns the Redis connection.
 - `AsyncLibraryModule.forRoot(...)` belongs to the library and registers its queue wiring, services, and defaults.
 - The library does not create or own the global BullMQ/Redis connection by itself.
+- `jobName` controls the BullMQ job name used when the library enqueues work.
 
 ## GitHub Packages
 
@@ -236,6 +238,17 @@ export class OrdersProcessor extends WorkerHost {
   // ...
 }
 ```
+
+The job name can also be configured explicitly:
+
+```ts
+AsyncLibraryModule.forRoot({
+  queueName: 'orders',
+  jobName: 'orders.create',
+})
+```
+
+That value becomes the BullMQ job name passed to `queue.add(...)`. The default worker pattern in this repository still processes jobs by queue, not by job name, so changing `jobName` does not require extra worker code unless the host application wants to branch on `job.name`.
 
 In short: the library owns the async HTTP pattern and status contract; the host application owns the actual background business work.
 

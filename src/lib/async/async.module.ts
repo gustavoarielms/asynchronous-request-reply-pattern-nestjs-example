@@ -1,6 +1,7 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { BullModule, getQueueToken } from '@nestjs/bullmq';
 import {
+  ASYNC_JOB_NAME,
   ASYNC_MODULE_OPTIONS,
   ASYNC_PATTERN_GET_STATUS,
   ASYNC_PATTERN_QUEUE,
@@ -16,6 +17,7 @@ import { normalizeStatusBasePath } from './utils/async-status-path.util';
 
 const DEFAULT_ASYNC_MODULE_OPTIONS: Required<AsyncModuleOptions> = {
   queueName: 'async',
+  jobName: 'processJob',
   defaultAllowedMethods: ['POST', 'PUT', 'PATCH'],
   exposeStatusController: false,
   statusBasePath: 'async-status',
@@ -58,6 +60,10 @@ export class AsyncLibraryModule {
           useValue: resolvedOptions.statusBasePath,
         },
         {
+          provide: ASYNC_JOB_NAME,
+          useValue: resolvedOptions.jobName,
+        },
+        {
           provide: ASYNC_STATUS_LOCATION_BASE_PATH,
           useValue: resolvedOptions.statusLocationBasePath,
         },
@@ -78,6 +84,7 @@ export class AsyncLibraryModule {
       ],
       exports: [
         ASYNC_MODULE_OPTIONS,
+        ASYNC_JOB_NAME,
         ASYNC_STATUS_BASE_PATH,
         ASYNC_STATUS_LOCATION_BASE_PATH,
         AsyncPatternService,
