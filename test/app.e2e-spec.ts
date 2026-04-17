@@ -1,4 +1,10 @@
-import { CallHandler, ExecutionContext, INestApplication, NotFoundException } from '@nestjs/common';
+import {
+  CallHandler,
+  ExecutionContext,
+  INestApplication,
+  MethodNotAllowedException,
+  NotFoundException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Test, TestingModule } from '@nestjs/testing';
 import { lastValueFrom } from 'rxjs';
@@ -13,6 +19,13 @@ import { AsyncStatusResponse } from '../src/lib/async/interfaces/http/async-stat
 
 class DefaultPayloadController {
   @Async()
+  handleRequest() {
+    return undefined;
+  }
+}
+
+class ExceptionalGetController {
+  @Async({ allowMethods: ['GET'] })
   handleRequest() {
     return undefined;
   }
@@ -123,6 +136,58 @@ describe('Async flow integration', () => {
     await expect(lastValueFrom(response$)).resolves.toEqual({
       status: 'accepted',
       location: '/async-status/status/456',
+    });
+    expect(asyncPatternStartProcessMock.startProcess).toHaveBeenCalledWith({
+      name: 'job',
+      milliseconds: 10,
+    });
+  });
+
+  it('rejects GET by default even when @Async() is present', async () => {
+    const context = {
+      switchToHttp: () => ({
+        getRequest: () => ({
+          method: 'GET',
+          body: { name: 'job', milliseconds: 10 },
+        }),
+      }),
+      getHandler: () => DefaultPayloadController.prototype.handleRequest,
+    } as unknown as ExecutionContext;
+
+    const next = {
+      handle: () => of(null),
+    } as CallHandler;
+
+    await expect(asyncInterceptor.intercept(context, next)).rejects.toBeInstanceOf(
+      MethodNotAllowedException
+    );
+  });
+
+  it('allows explicitly configured GET methods', async () => {
+    asyncPatternStartProcessMock.startProcess.mockResolvedValue({
+      status: 'accepted',
+      location: '/async-status/status/789',
+    });
+
+    const context = {
+      switchToHttp: () => ({
+        getRequest: () => ({
+          method: 'GET',
+          body: { name: 'job', milliseconds: 10 },
+        }),
+      }),
+      getHandler: () => ExceptionalGetController.prototype.handleRequest,
+    } as unknown as ExecutionContext;
+
+    const next = {
+      handle: () => of(null),
+    } as CallHandler;
+
+    const response$ = await asyncInterceptor.intercept(context, next);
+
+    await expect(lastValueFrom(response$)).resolves.toEqual({
+      status: 'accepted',
+      location: '/async-status/status/789',
     });
     expect(asyncPatternStartProcessMock.startProcess).toHaveBeenCalledWith({
       name: 'job',
