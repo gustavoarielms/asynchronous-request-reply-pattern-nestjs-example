@@ -10,12 +10,16 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { lastValueFrom } from 'rxjs';
 import { of } from 'rxjs';
 import { ExampleAsyncController } from '../apps/example/src/example/controllers/async.controller';
-import { ExampleAsyncStatusController } from '../apps/example/src/example/controllers/async-status.controller';
 import { ASYNC_PATTERN_GET_STATUS, ASYNC_PATTERN_START_PROCESS } from '../src/lib/async/async.tokens';
+import { createAsyncStatusController } from '../src/lib/async/controllers/async-status.controller';
 import { Async, ASYNC_OPTIONS } from '../src/lib/async/decorators/async.decorator';
 import { AsyncInterceptor } from '../src/lib/async/interceptors/async.interceptor';
 import { AsyncAcceptedResponse } from '../src/lib/async/interfaces/http/async-accepted-response.interface';
 import { AsyncStatusResponse } from '../src/lib/async/interfaces/http/async-status-response.interface';
+
+type AsyncStatusControllerContract = {
+  getStatus(id: string): Promise<AsyncStatusResponse>;
+};
 
 class DefaultPayloadController {
   @Async()
@@ -32,9 +36,10 @@ class ExceptionalGetController {
 }
 
 describe('Async flow integration', () => {
+  const AsyncStatusController = createAsyncStatusController('async-status');
   let app: INestApplication;
   let asyncController: ExampleAsyncController;
-  let asyncStatusController: ExampleAsyncStatusController;
+  let asyncStatusController: AsyncStatusControllerContract;
   let asyncInterceptor: AsyncInterceptor;
   let reflector: Reflector;
 
@@ -47,7 +52,7 @@ describe('Async flow integration', () => {
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      controllers: [ExampleAsyncController, ExampleAsyncStatusController],
+      controllers: [ExampleAsyncController, AsyncStatusController],
       providers: [
         AsyncInterceptor,
         {
@@ -65,7 +70,7 @@ describe('Async flow integration', () => {
     await app.init();
 
     asyncController = moduleFixture.get(ExampleAsyncController);
-    asyncStatusController = moduleFixture.get(ExampleAsyncStatusController);
+    asyncStatusController = moduleFixture.get<AsyncStatusControllerContract>(AsyncStatusController);
     asyncInterceptor = moduleFixture.get(AsyncInterceptor);
     reflector = moduleFixture.get(Reflector);
     jest.clearAllMocks();

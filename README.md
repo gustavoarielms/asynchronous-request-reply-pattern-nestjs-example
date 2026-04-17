@@ -111,6 +111,67 @@ The flow in this project is:
 
 In this repository, the example controller uses `@Async({ payloadPath: 'data' })`, so the example request body still wraps the payload under `data`. The library default is more generic: `@Async()` uses the full request body as the enqueued payload.
 
+`AsyncLibraryModule.forRoot(...)` can also expose the default polling controller from the library itself. The example app enables it with:
+
+```ts
+AsyncLibraryModule.forRoot({
+  exposeStatusController: true,
+  statusBasePath: 'async-status',
+})
+```
+
+That keeps the polling endpoint in the reusable core instead of duplicating a controller in each host app.
+
+If `exposeStatusController` is `false`, the library does not register any polling route. In that case, `location` is only returned when the host application configures a public path explicitly:
+
+```ts
+AsyncLibraryModule.forRoot({
+  exposeStatusController: false,
+  statusLocationBasePath: 'jobs',
+})
+```
+
+If neither the default controller nor a `statusLocationBasePath` is configured, the accepted response contains only:
+
+```json
+{
+  "status": "accepted"
+}
+```
+
+When `exposeStatusController` is `false`, the host application is responsible for exposing its own polling endpoint if it wants HTTP status lookup. A minimal controller looks like this:
+
+```ts
+import { Controller, Get, Inject, Param } from '@nestjs/common';
+import {
+  ASYNC_PATTERN_GET_STATUS,
+  AsyncStatusResponse,
+  IAsyncPatternGetStatus,
+} from '@gustavoarielms/nestjs-async-request-reply';
+
+@Controller('jobs')
+export class JobsStatusController {
+  constructor(
+    @Inject(ASYNC_PATTERN_GET_STATUS)
+    private readonly asyncStatus: IAsyncPatternGetStatus
+  ) {}
+
+  @Get('status/:id')
+  getStatus(@Param('id') id: string): Promise<AsyncStatusResponse> {
+    return this.asyncStatus.getStatus(id);
+  }
+}
+```
+
+If the host exposes that route publicly, it should also set the matching `statusLocationBasePath`:
+
+```ts
+AsyncLibraryModule.forRoot({
+  exposeStatusController: false,
+  statusLocationBasePath: 'jobs',
+})
+```
+
 By default, the decorator only allows `POST`, `PUT`, and `PATCH`. Exceptional cases such as `GET` must be enabled explicitly with `allowMethods`, for example `@Async({ allowMethods: ['GET'] })`.
 
 Exceptional legacy case only. Do not use this pattern for new endpoints:
@@ -362,6 +423,6 @@ The repository includes [example-tests.yml](/Users/gustavo/Patxa/asynchronous-re
 - The reusable async core lives in [src/lib/async/async.module.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/src/lib/async/async.module.ts).
 - The example app wiring lives in [apps/example/src/example/example-async.module.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/apps/example/src/example/example-async.module.ts).
 - The example async entrypoint is [apps/example/src/example/controllers/async.controller.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/apps/example/src/example/controllers/async.controller.ts).
-- The example polling endpoint is [apps/example/src/example/controllers/async-status.controller.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/apps/example/src/example/controllers/async-status.controller.ts).
+- The optional default polling controller lives in [src/lib/async/controllers/async-status.controller.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/src/lib/async/controllers/async-status.controller.ts).
 - Queue orchestration for the reusable core lives in [src/lib/async/services/async-pattern.service.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/src/lib/async/services/async-pattern.service.ts).
 - Sample business work lives in [apps/example/src/example/services/business.service.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/apps/example/src/example/services/business.service.ts).

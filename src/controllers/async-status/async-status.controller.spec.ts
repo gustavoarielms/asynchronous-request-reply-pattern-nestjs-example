@@ -1,16 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ExampleAsyncStatusController } from '../../../apps/example/src/example/controllers/async-status.controller';
 import { ASYNC_PATTERN_GET_STATUS } from '../../lib/async/async.tokens';
+import { createAsyncStatusController } from '../../lib/async/controllers/async-status.controller';
 
 describe('AsyncStatusController', () => {
-  let controller: ExampleAsyncStatusController;
+  const AsyncStatusController = createAsyncStatusController('async-status');
+  let controller: InstanceType<typeof AsyncStatusController>;
   const asyncPatternGetStatusMock = {
     getStatus: jest.fn(),
   };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [ExampleAsyncStatusController],
+      controllers: [AsyncStatusController],
       providers: [
         {
           provide: ASYNC_PATTERN_GET_STATUS,
@@ -19,7 +20,7 @@ describe('AsyncStatusController', () => {
       ],
     }).compile();
 
-    controller = module.get<ExampleAsyncStatusController>(ExampleAsyncStatusController);
+    controller = module.get<InstanceType<typeof AsyncStatusController>>(AsyncStatusController);
   });
 
   it('should be defined', () => {
