@@ -28,6 +28,33 @@ import { AsyncLibraryModule, Async } from '@gustavoarielms/nestjs-async-request-
 
 The package entrypoint is intentionally narrow. It exposes the module, decorator, public response contracts, and DI-facing interfaces and tokens. Internal implementation details such as the interceptor and concrete services stay out of the public API.
 
+## Library wiring
+
+The host application is responsible for the global BullMQ/Redis connection:
+
+```ts
+BullModule.forRoot({
+  connection: {
+    host: process.env.REDIS_HOST,
+    port: Number(process.env.REDIS_PORT),
+  },
+})
+```
+
+The library module sits on top of that global BullMQ setup:
+
+```ts
+AsyncLibraryModule.forRoot({
+  queueName: 'async',
+})
+```
+
+In other words:
+
+- `BullModule.forRoot(...)` belongs to the consuming application and owns the Redis connection.
+- `AsyncLibraryModule.forRoot(...)` belongs to the library and registers its queue wiring, services, and defaults.
+- The library does not create or own the global BullMQ/Redis connection by itself.
+
 ## GitHub Packages
 
 This library is prepared to publish to GitHub Packages as:
