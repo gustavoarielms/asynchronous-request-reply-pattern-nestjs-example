@@ -102,6 +102,10 @@ The intended flow is:
 
 The initial release manifest lives in [release-please-config.json](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/release-please-config.json) and [.release-please-manifest.json](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/.release-please-manifest.json).
 
+## Contribution flow
+
+Branch naming, PR targeting, and PR title guidance for this repository are documented in [CONTRIBUTING.md](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/CONTRIBUTING.md).
+
 ## How it works
 
 The flow in this project is:

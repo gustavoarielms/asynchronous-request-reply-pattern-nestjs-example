@@ -1,6 +1,7 @@
 ## Summary
 
 <!-- Qué hace este PR -->
+<!-- Título sugerido: type(scope): short summary -->
 
 ## Changes
 
