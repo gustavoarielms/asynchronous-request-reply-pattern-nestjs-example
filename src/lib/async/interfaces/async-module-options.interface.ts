@@ -1,4 +1,6 @@
+import { Type } from '@nestjs/common';
 import { AsyncAllowedMethod } from './async-options.interface';
+import { IAsyncStatusStore } from './services/async-status-store.interface';
 
 export interface AsyncModuleOptions {
   queueName?: string;
@@ -7,4 +9,5 @@ export interface AsyncModuleOptions {
   exposeStatusController?: boolean;
   statusBasePath?: string;
   statusLocationBasePath?: string;
+  statusStoreClass?: Type<IAsyncStatusStore>;
 }

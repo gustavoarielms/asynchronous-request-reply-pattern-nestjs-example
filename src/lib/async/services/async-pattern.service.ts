@@ -4,6 +4,7 @@ import {
   ASYNC_JOB_NAME,
   ASYNC_PATTERN_QUEUE,
   ASYNC_STATUS_LOCATION_BASE_PATH,
+  ASYNC_STATUS_STORE,
 } from '../async.tokens';
 import { AsyncAcceptedResponse } from '../interfaces/http/async-accepted-response.interface';
 import {
@@ -14,7 +15,7 @@ import {
 } from '../interfaces/http/async-status-response.interface';
 import { IAsyncPatternGetStatus } from '../interfaces/services/async-pattern-get-status.interface';
 import { IAsyncPatternStartProcess } from '../interfaces/services/async-pattern-start-process.interface';
-import { AsyncStatusStoreService } from './async-status-store.service';
+import { IAsyncStatusStore } from '../interfaces/services/async-status-store.interface';
 import { buildStatusLocation } from '../utils/async-status-path.util';
 
 @Injectable()
@@ -22,7 +23,7 @@ export class AsyncPatternService implements IAsyncPatternStartProcess, IAsyncPat
   constructor(
     @Inject(ASYNC_PATTERN_QUEUE) private readonly asyncQueue: Queue<unknown>,
     @Inject(ASYNC_JOB_NAME) private readonly jobName: string,
-    private readonly asyncStatusStore: AsyncStatusStoreService,
+    @Inject(ASYNC_STATUS_STORE) private readonly asyncStatusStore: IAsyncStatusStore,
     @Inject(ASYNC_STATUS_LOCATION_BASE_PATH) private readonly statusLocationBasePath: string
   ) {}
 

@@ -8,6 +8,7 @@ import {
   ASYNC_PATTERN_START_PROCESS,
   ASYNC_STATUS_BASE_PATH,
   ASYNC_STATUS_LOCATION_BASE_PATH,
+  ASYNC_STATUS_STORE,
 } from './async.tokens';
 import { AsyncModuleOptions } from './interfaces/async-module-options.interface';
 import { createAsyncStatusController } from './controllers/async-status.controller';
@@ -22,6 +23,7 @@ const DEFAULT_ASYNC_MODULE_OPTIONS: Required<AsyncModuleOptions> = {
   exposeStatusController: false,
   statusBasePath: 'async-status',
   statusLocationBasePath: '',
+  statusStoreClass: AsyncStatusStoreService,
 };
 
 @Module({})
@@ -42,6 +44,7 @@ export class AsyncLibraryModule {
     const statusController = resolvedOptions.exposeStatusController
       ? createAsyncStatusController(resolvedOptions.statusBasePath)
       : null;
+    const statusStoreClass = resolvedOptions.statusStoreClass;
 
     return {
       module: AsyncLibraryModule,
@@ -71,8 +74,12 @@ export class AsyncLibraryModule {
           provide: ASYNC_PATTERN_QUEUE,
           useExisting: getQueueToken(resolvedOptions.queueName),
         },
+        statusStoreClass,
+        {
+          provide: ASYNC_STATUS_STORE,
+          useExisting: statusStoreClass,
+        },
         AsyncPatternService,
-        AsyncStatusStoreService,
         {
           provide: ASYNC_PATTERN_GET_STATUS,
           useExisting: AsyncPatternService,
@@ -87,8 +94,8 @@ export class AsyncLibraryModule {
         ASYNC_JOB_NAME,
         ASYNC_STATUS_BASE_PATH,
         ASYNC_STATUS_LOCATION_BASE_PATH,
+        ASYNC_STATUS_STORE,
         AsyncPatternService,
-        AsyncStatusStoreService,
         ASYNC_PATTERN_GET_STATUS,
         ASYNC_PATTERN_START_PROCESS,
       ],
