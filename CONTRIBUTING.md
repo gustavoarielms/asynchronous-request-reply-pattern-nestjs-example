@@ -40,6 +40,7 @@ Guidelines:
 - Use lowercase letters.
 - Separate words with hyphens.
 - Keep the name focused on one change.
+- Do not add author or tool prefixes such as `codex/` unless the repository explicitly adopts that convention.
 - Avoid generic names such as `test`, `changes`, or `new-branch`.
 
 ## Pull request target
@@ -71,6 +72,12 @@ If no scope is useful, omit it:
 ```text
 docs: clarify contribution flow
 ```
+
+Guidelines:
+
+- The title must describe the actual change in the PR.
+- Do not use tool or author prefixes such as `[codex]`.
+- Keep it specific enough that someone can understand the change from the PR list alone.
 
 ## Pull request checklist
 
@@ -104,4 +111,3 @@ To reinforce this process in GitHub settings, maintainers can also:
 - require status checks before merge
 - require branch to be up to date before merge
 - require the PR template to be completed during review
-

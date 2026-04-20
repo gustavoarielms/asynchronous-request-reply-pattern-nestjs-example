@@ -2,6 +2,7 @@
 
 <!-- Qué hace este PR -->
 <!-- Título sugerido: type(scope): short summary -->
+<!-- El título debe describir el cambio real. Evitar prefijos como [codex]. -->
 
 ## Changes
 
