@@ -9,5 +9,6 @@ export interface AsyncModuleOptions {
   exposeStatusController?: boolean;
   statusBasePath?: string;
   statusLocationBasePath?: string;
+  statusTtlSeconds?: number | null;
   statusStoreClass?: Type<IAsyncStatusStore>;
 }

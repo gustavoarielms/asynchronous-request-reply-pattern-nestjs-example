@@ -23,12 +23,21 @@ const DEFAULT_ASYNC_MODULE_OPTIONS: Required<AsyncModuleOptions> = {
   exposeStatusController: false,
   statusBasePath: 'async-status',
   statusLocationBasePath: '',
+  statusTtlSeconds: 60 * 60 * 24,
   statusStoreClass: AsyncStatusStoreService,
 };
 
 @Module({})
 export class AsyncLibraryModule {
   static forRoot(options: AsyncModuleOptions = {}): DynamicModule {
+    if (
+      options.statusTtlSeconds !== undefined
+      && options.statusTtlSeconds !== null
+      && (!Number.isInteger(options.statusTtlSeconds) || options.statusTtlSeconds < 1)
+    ) {
+      throw new Error('statusTtlSeconds must be a positive integer or null');
+    }
+
     const resolvedOptions: Required<AsyncModuleOptions> = {
       ...DEFAULT_ASYNC_MODULE_OPTIONS,
       ...options,

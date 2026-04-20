@@ -57,6 +57,7 @@ In other words:
 - The library does not create or own the global BullMQ/Redis connection by itself.
 - `jobName` controls the BullMQ job name used when the library enqueues work.
 - The library uses a status store contract internally and ships a Redis-backed implementation by default.
+- The default Redis-backed status store keeps job status records for 24 hours unless `statusTtlSeconds` is configured explicitly.
 
 ## GitHub Packages
 
@@ -231,6 +232,24 @@ export class CustomStatusStore implements IAsyncStatusStore {
 
 AsyncLibraryModule.forRoot({
   statusStoreClass: CustomStatusStore,
+})
+```
+
+If the default Redis-backed store is good enough but the retention window is not, the host can configure it directly:
+
+```ts
+AsyncLibraryModule.forRoot({
+  statusTtlSeconds: 60 * 60,
+})
+```
+
+That keeps job status records for one hour instead of the default 24 hours.
+
+If the host wants the default store to keep status records without automatic expiration, it can disable the TTL explicitly:
+
+```ts
+AsyncLibraryModule.forRoot({
+  statusTtlSeconds: null,
 })
 ```
 
