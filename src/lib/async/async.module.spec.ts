@@ -1,5 +1,5 @@
 import { Injectable, Provider } from '@nestjs/common';
-import { ASYNC_STATUS_STORE } from './async.tokens';
+import { ASYNC_MODULE_OPTIONS, ASYNC_STATUS_STORE } from './async.tokens';
 import { AsyncLibraryModule } from './async.module';
 import { AsyncStatusResponse } from './interfaces/http/async-status-response.interface';
 import { IAsyncStatusStore } from './interfaces/services/async-status-store.interface';
@@ -40,5 +40,27 @@ describe('AsyncLibraryModule', () => {
       provide: ASYNC_STATUS_STORE,
       useExisting: CustomStatusStore,
     });
+  });
+
+  it('should expose the configured status TTL through module options', () => {
+    const dynamicModule = AsyncLibraryModule.forRoot({
+      statusTtlSeconds: 3600,
+    });
+
+    const optionsProvider = (dynamicModule.providers as Provider[]).find(
+      provider =>
+        'provide' in provider
+        && provider.provide === ASYNC_MODULE_OPTIONS
+    ) as Provider & { useValue: { statusTtlSeconds: number } };
+
+    expect(optionsProvider.useValue.statusTtlSeconds).toBe(3600);
+  });
+
+  it('should reject invalid status TTL values', () => {
+    expect(() =>
+      AsyncLibraryModule.forRoot({
+        statusTtlSeconds: 0,
+      })
+    ).toThrow('statusTtlSeconds must be a positive integer or null');
   });
 });
