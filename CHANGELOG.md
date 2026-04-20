@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.8](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/compare/nestjs-async-request-reply-v0.0.7...nestjs-async-request-reply-v0.0.8) (2026-04-20)
+
+
+### Bug Fixes
+
+* preserve empty-string async results ([02ac579](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/commit/02ac5799642cbbfcb4ddff6cca707b07643116cc))
+* preserve empty-string async results ([4505471](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/commit/450547104c13cf5ae53c170b11fdf992068bf570))
+
 ## [0.0.7](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/compare/nestjs-async-request-reply-v0.0.6...nestjs-async-request-reply-v0.0.7) (2026-04-17)
 
 
