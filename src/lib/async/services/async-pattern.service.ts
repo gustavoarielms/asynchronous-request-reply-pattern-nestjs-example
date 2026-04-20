@@ -70,7 +70,7 @@ export class AsyncPatternService implements IAsyncPatternStartProcess, IAsyncPat
     if (state === 'completed') {
       const response: AsyncCompletedResponse = {
         status: state,
-        result: result || 'Processing',
+        result: this.resolveResult(result),
         completed: true,
       };
       await this.asyncStatusStore.setCompleted(jobId, response.result);
@@ -81,7 +81,7 @@ export class AsyncPatternService implements IAsyncPatternStartProcess, IAsyncPat
       await this.asyncStatusStore.setActive(jobId);
       return {
         status: 'active',
-        result: result || 'Processing',
+        result: this.resolveResult(result),
         completed: false,
       };
     }
@@ -90,8 +90,12 @@ export class AsyncPatternService implements IAsyncPatternStartProcess, IAsyncPat
       ? storedStatus
       : {
       status: state,
-      result: result || 'Processing',
+      result: this.resolveResult(result),
       completed: false,
     };
+  }
+
+  private resolveResult(result: string | null | undefined): string {
+    return result ?? 'Processing';
   }
 }

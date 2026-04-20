@@ -181,6 +181,22 @@ describe('AsyncService', () => {
     expect(asyncStatusStoreMock.setCompleted).toHaveBeenCalledWith('123', 'Processed data: job');
   });
 
+  it('should preserve an empty-string completed result', async () => {
+    asyncStatusStoreMock.get.mockResolvedValue(null);
+    queueMock.getJob.mockResolvedValue({
+      getState: jest.fn().mockResolvedValue('completed'),
+      returnvalue: '',
+      failedReason: null,
+    });
+
+    await expect(service.getStatus('123')).resolves.toEqual({
+      status: 'completed',
+      result: '',
+      completed: true,
+    });
+    expect(asyncStatusStoreMock.setCompleted).toHaveBeenCalledWith('123', '');
+  });
+
   it('should return a pending response for a queued job', async () => {
     asyncStatusStoreMock.get.mockResolvedValue(null);
     queueMock.getJob.mockResolvedValue({
