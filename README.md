@@ -6,6 +6,10 @@ The API accepts a request, enqueues the work, responds with `202 Accepted`, and 
 
 The repository now also exposes the reusable async core as an npm package entrypoint from [src/lib/async/index.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/src/lib/async/index.ts).
 
+## License
+
+This project is available under the [MIT License](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/LICENSE).
+
 ## Package output
 
 The publishable package is built from the reusable library code only:
