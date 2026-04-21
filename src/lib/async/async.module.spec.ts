@@ -1,7 +1,7 @@
 import { Injectable, Provider } from '@nestjs/common';
 import { ASYNC_MODULE_OPTIONS, ASYNC_STATUS_STORE } from './async.tokens';
 import { AsyncLibraryModule } from './async.module';
-import { AsyncStatusResponse } from './interfaces/http/async-status-response.interface';
+import { AsyncStatusResponse, AsyncStatusResult } from './interfaces/http/async-status-response.interface';
 import { IAsyncStatusStore } from './interfaces/services/async-status-store.interface';
 
 @Injectable()
@@ -18,11 +18,11 @@ class CustomStatusStore implements IAsyncStatusStore {
     return Promise.resolve();
   }
 
-  setCompleted(_jobId: string, _result: string): Promise<void> {
+  setCompleted(_jobId: string, _result: AsyncStatusResult): Promise<void> {
     return Promise.resolve();
   }
 
-  setFailed(_jobId: string, _result: string): Promise<void> {
+  setFailed(_jobId: string, _result: AsyncStatusResult): Promise<void> {
     return Promise.resolve();
   }
 }

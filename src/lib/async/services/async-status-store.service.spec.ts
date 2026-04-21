@@ -79,4 +79,39 @@ describe('AsyncStatusStoreService', () => {
       })
     );
   });
+
+  it('should store structured completed results as JSON', async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        AsyncStatusStoreService,
+        {
+          provide: ASYNC_PATTERN_QUEUE,
+          useValue: queueMock,
+        },
+      ],
+    }).compile();
+
+    const service = module.get<AsyncStatusStoreService>(AsyncStatusStoreService);
+
+    await service.setCompleted('123', {
+      orderId: 123,
+      ok: true,
+      items: ['a', 'b'],
+    });
+
+    expect(redisClientMock.set).toHaveBeenCalledWith(
+      'async:status:123',
+      JSON.stringify({
+        status: 'completed',
+        result: {
+          orderId: 123,
+          ok: true,
+          items: ['a', 'b'],
+        },
+        completed: true,
+      }),
+      'EX',
+      86400
+    );
+  });
 });

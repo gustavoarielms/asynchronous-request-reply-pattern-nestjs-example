@@ -12,6 +12,7 @@ import {
   AsyncFailedResponse,
   AsyncPendingQueueState,
   AsyncStatusResponse,
+  AsyncStatusResult,
 } from '../interfaces/http/async-status-response.interface';
 import { IAsyncPatternGetStatus } from '../interfaces/services/async-pattern-get-status.interface';
 import { IAsyncPatternStartProcess } from '../interfaces/services/async-pattern-start-process.interface';
@@ -70,7 +71,7 @@ export class AsyncPatternService implements IAsyncPatternStartProcess, IAsyncPat
     if (state === 'completed') {
       const response: AsyncCompletedResponse = {
         status: state,
-        result: this.resolveResult(result),
+        result: this.resolveCompletedResult(result),
         completed: true,
       };
       await this.asyncStatusStore.setCompleted(jobId, response.result);
@@ -81,7 +82,7 @@ export class AsyncPatternService implements IAsyncPatternStartProcess, IAsyncPat
       await this.asyncStatusStore.setActive(jobId);
       return {
         status: 'active',
-        result: this.resolveResult(result),
+        result: this.resolveInProgressResult(result),
         completed: false,
       };
     }
@@ -90,12 +91,37 @@ export class AsyncPatternService implements IAsyncPatternStartProcess, IAsyncPat
       ? storedStatus
       : {
       status: state,
-      result: this.resolveResult(result),
+      result: this.resolveInProgressResult(result),
       completed: false,
     };
   }
 
-  private resolveResult(result: string | null | undefined): string {
-    return result ?? 'Processing';
+  private resolveCompletedResult(result: unknown): AsyncStatusResult {
+    return result === undefined ? 'Processing' : this.toStatusResult(result);
+  }
+
+  private resolveInProgressResult(result: unknown): AsyncStatusResult {
+    return result === undefined || result === null
+      ? 'Processing'
+      : this.toStatusResult(result);
+  }
+
+  private toStatusResult(result: unknown): AsyncStatusResult {
+    if (this.isPrimitiveStatusResult(result)) {
+      return result;
+    }
+
+    return JSON.parse(JSON.stringify(result)) as AsyncStatusResult;
+  }
+
+  private isPrimitiveStatusResult(
+    result: unknown
+  ): result is string | number | boolean | null {
+    return (
+      result === null
+      || typeof result === 'string'
+      || typeof result === 'number'
+      || typeof result === 'boolean'
+    );
   }
 }
