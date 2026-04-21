@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.9](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/compare/nestjs-async-request-reply-v0.0.8...nestjs-async-request-reply-v0.0.9) (2026-04-20)
+
+
+### Features
+
+* make status store retention configurable ([35489a4](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/commit/35489a4ef80491ac2818d328d25daf6bff82d82e))
+* make status store retention configurable ([6f7ed21](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/commit/6f7ed218bbf2ded70a49983fa1bb405fc290d0c1))
+
 ## [0.0.8](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/compare/nestjs-async-request-reply-v0.0.7...nestjs-async-request-reply-v0.0.8) (2026-04-20)
 
 
