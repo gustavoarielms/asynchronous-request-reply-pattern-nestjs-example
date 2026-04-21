@@ -3,7 +3,7 @@
   "version": "0.0.9",
   "description": "NestJS library for asynchronous request-reply HTTP flows backed by BullMQ and Redis.",
   "author": "gustavoarielms",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example.git"
