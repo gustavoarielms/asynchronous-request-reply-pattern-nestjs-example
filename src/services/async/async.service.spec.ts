@@ -197,6 +197,79 @@ describe('AsyncService', () => {
     expect(asyncStatusStoreMock.setCompleted).toHaveBeenCalledWith('123', '');
   });
 
+  it('should preserve a numeric completed result', async () => {
+    asyncStatusStoreMock.get.mockResolvedValue(null);
+    queueMock.getJob.mockResolvedValue({
+      getState: jest.fn().mockResolvedValue('completed'),
+      returnvalue: 0,
+      failedReason: null,
+    });
+
+    await expect(service.getStatus('123')).resolves.toEqual({
+      status: 'completed',
+      result: 0,
+      completed: true,
+    });
+    expect(asyncStatusStoreMock.setCompleted).toHaveBeenCalledWith('123', 0);
+  });
+
+  it('should preserve a boolean completed result', async () => {
+    asyncStatusStoreMock.get.mockResolvedValue(null);
+    queueMock.getJob.mockResolvedValue({
+      getState: jest.fn().mockResolvedValue('completed'),
+      returnvalue: false,
+      failedReason: null,
+    });
+
+    await expect(service.getStatus('123')).resolves.toEqual({
+      status: 'completed',
+      result: false,
+      completed: true,
+    });
+    expect(asyncStatusStoreMock.setCompleted).toHaveBeenCalledWith('123', false);
+  });
+
+  it('should preserve a null completed result', async () => {
+    asyncStatusStoreMock.get.mockResolvedValue(null);
+    queueMock.getJob.mockResolvedValue({
+      getState: jest.fn().mockResolvedValue('completed'),
+      returnvalue: null,
+      failedReason: null,
+    });
+
+    await expect(service.getStatus('123')).resolves.toEqual({
+      status: 'completed',
+      result: null,
+      completed: true,
+    });
+    expect(asyncStatusStoreMock.setCompleted).toHaveBeenCalledWith('123', null);
+  });
+
+  it('should preserve an object completed result', async () => {
+    asyncStatusStoreMock.get.mockResolvedValue(null);
+    queueMock.getJob.mockResolvedValue({
+      getState: jest.fn().mockResolvedValue('completed'),
+      returnvalue: {
+        orderId: 123,
+        ok: true,
+      },
+      failedReason: null,
+    });
+
+    await expect(service.getStatus('123')).resolves.toEqual({
+      status: 'completed',
+      result: {
+        orderId: 123,
+        ok: true,
+      },
+      completed: true,
+    });
+    expect(asyncStatusStoreMock.setCompleted).toHaveBeenCalledWith('123', {
+      orderId: 123,
+      ok: true,
+    });
+  });
+
   it('should return a pending response for a queued job', async () => {
     asyncStatusStoreMock.get.mockResolvedValue(null);
     queueMock.getJob.mockResolvedValue({

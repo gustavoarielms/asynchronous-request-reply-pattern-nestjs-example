@@ -2,7 +2,7 @@ import { Inject, Injectable, Optional } from '@nestjs/common';
 import { Queue } from 'bullmq';
 import { ASYNC_MODULE_OPTIONS, ASYNC_PATTERN_QUEUE } from '../async.tokens';
 import { AsyncModuleOptions } from '../interfaces/async-module-options.interface';
-import { AsyncStatusResponse } from '../interfaces/http/async-status-response.interface';
+import { AsyncStatusResponse, AsyncStatusResult } from '../interfaces/http/async-status-response.interface';
 
 const STATUS_KEY_PREFIX = 'async:status';
 const DEFAULT_STATUS_TTL_SECONDS = 60 * 60 * 24;
@@ -43,7 +43,7 @@ export class AsyncStatusStoreService {
     });
   }
 
-  async setCompleted(jobId: string, result: string): Promise<void> {
+  async setCompleted(jobId: string, result: AsyncStatusResult): Promise<void> {
     await this.set(jobId, {
       status: 'completed',
       result,
@@ -51,7 +51,7 @@ export class AsyncStatusStoreService {
     });
   }
 
-  async setFailed(jobId: string, result: string): Promise<void> {
+  async setFailed(jobId: string, result: AsyncStatusResult): Promise<void> {
     await this.set(jobId, {
       status: 'failed',
       result,

@@ -196,6 +196,7 @@ The status persistence layer is also explicit in the library contract:
 - token: `ASYNC_STATUS_STORE`
 - interface: `IAsyncStatusStore`
 - default implementation: Redis-backed, reusing the BullMQ connection already configured by the host app
+- status results: JSON-like values such as strings, numbers, booleans, arrays, objects, or `null`
 
 Most consumers should keep that default. If they need a different backing store, they can replace it with their own injectable class:
 
@@ -221,11 +222,11 @@ export class CustomStatusStore implements IAsyncStatusStore {
     throw new Error('Not implemented');
   }
 
-  setCompleted(_jobId: string, _result: string): Promise<void> {
+  setCompleted(_jobId: string, _result: unknown): Promise<void> {
     throw new Error('Not implemented');
   }
 
-  setFailed(_jobId: string, _result: string): Promise<void> {
+  setFailed(_jobId: string, _result: unknown): Promise<void> {
     throw new Error('Not implemented');
   }
 }
@@ -273,7 +274,7 @@ import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Job } from 'bullmq';
 
 export interface OrdersService {
-  createOrder(data: unknown): Promise<string>;
+  createOrder(data: unknown): Promise<unknown>;
 }
 
 @Processor('async')
@@ -286,7 +287,7 @@ export class OrdersProcessor extends WorkerHost {
     super();
   }
 
-  process(job: Job<unknown, string>): Promise<string> {
+  process(job: Job<unknown, unknown>): Promise<unknown> {
     return this.ordersService.createOrder(job.data);
   }
 }

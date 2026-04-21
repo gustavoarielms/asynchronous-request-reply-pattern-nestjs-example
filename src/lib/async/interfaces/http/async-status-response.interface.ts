@@ -1,3 +1,11 @@
+export type AsyncStatusResult =
+  | string
+  | number
+  | boolean
+  | null
+  | AsyncStatusResult[]
+  | { [key: string]: AsyncStatusResult };
+
 export type AsyncPendingQueueState =
   | 'active'
   | 'accepted'
@@ -9,19 +17,19 @@ export type AsyncPendingQueueState =
 
 export interface AsyncFailedResponse {
   status: 'failed';
-  result: string;
+  result: AsyncStatusResult;
   completed: true;
 }
 
 export interface AsyncCompletedResponse {
   status: 'completed';
-  result: string;
+  result: AsyncStatusResult;
   completed: true;
 }
 
 export interface AsyncPendingResponse {
   status: AsyncPendingQueueState;
-  result: string;
+  result: AsyncStatusResult;
   completed: false;
 }
 
