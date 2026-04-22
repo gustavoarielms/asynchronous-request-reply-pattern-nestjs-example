@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": "../../dist/package-consumer",
+    "paths": {
+      "@gustavoarielms/nestjs-async-request-reply": ["../../dist/lib/async/index.d.ts"]
+    },
+    "rootDir": "./src"
+  },
+  "include": ["src/**/*.ts"]
+}

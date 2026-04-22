@@ -8,6 +8,8 @@ The repository now also exposes the reusable async core as an npm package entryp
 
 If you want the shortest integration path first, start with [docs/quickstart.md](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/docs/quickstart.md).
 
+For a real consuming app inside this repository, see [apps/package-consumer](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/apps/package-consumer).
+
 ## License
 
 This project is available under the [MIT License](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/LICENSE).
