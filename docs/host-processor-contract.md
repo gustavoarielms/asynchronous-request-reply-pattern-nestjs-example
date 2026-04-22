@@ -9,70 +9,7 @@ The library does not implement any business worker for you. It only:
 
 The consuming application is still responsible for the background processor that handles the queued work.
 
-## Status Store Contract
-
-The status persistence layer is explicit in the library contract:
-
-- token: `ASYNC_STATUS_STORE`
-- interface: `IAsyncStatusStore`
-- default implementation: Redis-backed, reusing the BullMQ connection already configured by the host app
-- status results: JSON-like values such as strings, numbers, booleans, arrays, objects, or `null`
-
-Most consumers should keep that default. If they need a different backing store, they can replace it with their own injectable class:
-
-```ts
-import { Injectable } from '@nestjs/common';
-import {
-  AsyncLibraryModule,
-  AsyncStatusResponse,
-  IAsyncStatusStore,
-} from '@gustavoarielms/nestjs-async-request-reply';
-
-@Injectable()
-export class CustomStatusStore implements IAsyncStatusStore {
-  get(_jobId: string): Promise<AsyncStatusResponse | null> {
-    throw new Error('Not implemented');
-  }
-
-  setAccepted(_jobId: string): Promise<void> {
-    throw new Error('Not implemented');
-  }
-
-  setActive(_jobId: string): Promise<void> {
-    throw new Error('Not implemented');
-  }
-
-  setCompleted(_jobId: string, _result: unknown): Promise<void> {
-    throw new Error('Not implemented');
-  }
-
-  setFailed(_jobId: string, _result: unknown): Promise<void> {
-    throw new Error('Not implemented');
-  }
-}
-
-AsyncLibraryModule.forRoot({
-  statusStoreClass: CustomStatusStore,
-})
-```
-
-If the default Redis-backed store is good enough but the retention window is not, the host can configure it directly:
-
-```ts
-AsyncLibraryModule.forRoot({
-  statusTtlSeconds: 60 * 60,
-})
-```
-
-That keeps job status records for one hour instead of the default 24 hours.
-
-If the host wants the default store to keep status records without automatic expiration, it can disable the TTL explicitly:
-
-```ts
-AsyncLibraryModule.forRoot({
-  statusTtlSeconds: null,
-})
-```
+The status persistence layer has its own dedicated reference in [status-store.md](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/docs/status-store.md). This document focuses on the worker and processor responsibilities of the host application.
 
 ## Minimum Host Responsibilities
 
