@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.10](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/compare/nestjs-async-request-reply-v0.0.9...nestjs-async-request-reply-v0.0.10) (2026-04-22)
+
+
+### Features
+
+* release public API changes since 0.0.9 ([#54](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/issues/54)) ([50c1a98](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/commit/50c1a9832dd215bbae098909c925a631c31a29e5))
+
 ## [0.0.9](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/compare/nestjs-async-request-reply-v0.0.8...nestjs-async-request-reply-v0.0.9) (2026-04-20)
 
 
