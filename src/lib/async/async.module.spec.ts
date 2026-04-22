@@ -63,4 +63,37 @@ describe('AsyncLibraryModule', () => {
       })
     ).toThrow('statusTtlSeconds must be a positive integer or null');
   });
+
+  it('should reject empty queue names', () => {
+    expect(() =>
+      AsyncLibraryModule.forRoot({
+        queueName: '   ',
+      })
+    ).toThrow('queueName must be a non-empty string');
+  });
+
+  it('should reject empty job names', () => {
+    expect(() =>
+      AsyncLibraryModule.forRoot({
+        jobName: '   ',
+      })
+    ).toThrow('jobName must be a non-empty string');
+  });
+
+  it('should reject an empty status base path when exposing the status controller', () => {
+    expect(() =>
+      AsyncLibraryModule.forRoot({
+        exposeStatusController: true,
+        statusBasePath: '/',
+      })
+    ).toThrow('statusBasePath must resolve to a non-empty path when exposeStatusController is true');
+  });
+
+  it('should reject invalid explicit status location base paths', () => {
+    expect(() =>
+      AsyncLibraryModule.forRoot({
+        statusLocationBasePath: '/',
+      })
+    ).toThrow('statusLocationBasePath must resolve to a non-empty path');
+  });
 });
