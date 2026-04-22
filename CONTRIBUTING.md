@@ -6,6 +6,7 @@
 - All regular changes must land in `main` through pull requests.
 - Do not commit directly to `main`.
 - Release automation (`release-please`) runs from `main`, opens the release PR, and publishes from the generated release flow.
+- Keep `main` linear for release automation. Prefer `Squash and merge` and disable plain merge commits in GitHub repository settings.
 
 ## Branch naming
 
@@ -78,6 +79,19 @@ Guidelines:
 - The title must describe the actual change in the PR.
 - Do not use tool or author prefixes such as `[codex]`.
 - Keep it specific enough that someone can understand the change from the PR list alone.
+- Classify the title by consumer-facing impact, not by implementation technique.
+- Use `feat:` when the package gains new public capability or broadens a public contract.
+- Use `fix:` when the package corrects observable behavior.
+- Use `feat!:` or `fix!:` when the change is breaking for consumers, including removed exports or incompatible configuration changes.
+- Avoid `refactor:` for consumer-visible API, configuration, or behavior changes because `release-please` will not create a release from that type alone.
+
+Examples of refactor-shaped changes that should not be titled `refactor:`:
+
+```text
+feat: allow JSON-like async status results
+fix: validate async module options eagerly
+feat!: narrow public package exports
+```
 
 ## Pull request checklist
 
@@ -99,7 +113,7 @@ This repository already provides a PR template in `.github/pull_request_template
 3. Run the relevant validation locally.
 4. Open a PR to `main`.
 5. Wait for review and CI before merge.
-6. Merge to `main`.
+6. Merge to `main` with `Squash and merge`, keeping the PR title as the squash commit message.
 7. Let `release-please` manage release PRs and version publishing.
 
 ## Optional repository enforcement
@@ -111,3 +125,6 @@ To reinforce this process in GitHub settings, maintainers can also:
 - require status checks before merge
 - require branch to be up to date before merge
 - require the PR template to be completed during review
+- enable `Squash and merge`
+- disable `Merge commit`
+- default to PR title for squash merge commits
