@@ -77,9 +77,9 @@ In other words:
 - The library does not create or own the global BullMQ/Redis connection by itself.
 - `jobName` controls the BullMQ job name used when the library enqueues work.
 - The library uses a status store contract internally and ships a Redis-backed implementation by default.
-- The default Redis-backed status store keeps job status records for 24 hours unless `statusTtlSeconds` is configured explicitly.
 
 The complete option reference now lives in [docs/module-options.md](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/docs/module-options.md).
+The status store contract and retention behavior are documented in [docs/status-store.md](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/docs/status-store.md).
 
 ## GitHub Packages
 
