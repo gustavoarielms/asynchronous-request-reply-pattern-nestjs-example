@@ -27,9 +27,20 @@ const DEFAULT_ASYNC_MODULE_OPTIONS: Required<AsyncModuleOptions> = {
   statusStoreClass: AsyncStatusStoreService,
 };
 
+function assertNonEmptyStringOption(value: string | undefined, optionName: string): void {
+  if (value !== undefined && value.trim().length === 0) {
+    throw new Error(`${optionName} must be a non-empty string`);
+  }
+}
+
 @Module({})
 export class AsyncLibraryModule {
   static forRoot(options: AsyncModuleOptions = {}): DynamicModule {
+    assertNonEmptyStringOption(options.queueName, 'queueName');
+    assertNonEmptyStringOption(options.jobName, 'jobName');
+    assertNonEmptyStringOption(options.statusBasePath, 'statusBasePath');
+    assertNonEmptyStringOption(options.statusLocationBasePath, 'statusLocationBasePath');
+
     if (
       options.statusTtlSeconds !== undefined
       && options.statusTtlSeconds !== null
@@ -49,6 +60,22 @@ export class AsyncLibraryModule {
           ?? (options.exposeStatusController ? options.statusBasePath ?? DEFAULT_ASYNC_MODULE_OPTIONS.statusBasePath : '')
       ),
     };
+
+    if (resolvedOptions.queueName.length === 0) {
+      throw new Error('queueName must be a non-empty string');
+    }
+
+    if (resolvedOptions.jobName.length === 0) {
+      throw new Error('jobName must be a non-empty string');
+    }
+
+    if (resolvedOptions.exposeStatusController && resolvedOptions.statusBasePath.length === 0) {
+      throw new Error('statusBasePath must resolve to a non-empty path when exposeStatusController is true');
+    }
+
+    if (options.statusLocationBasePath !== undefined && resolvedOptions.statusLocationBasePath.length === 0) {
+      throw new Error('statusLocationBasePath must resolve to a non-empty path');
+    }
 
     const statusController = resolvedOptions.exposeStatusController
       ? createAsyncStatusController(resolvedOptions.statusBasePath)
