@@ -152,55 +152,7 @@ AsyncLibraryModule.forRoot({
 
 That keeps the polling endpoint in the reusable core instead of duplicating a controller in each host app.
 
-If `exposeStatusController` is `false`, the library does not register any polling route. In that case, `location` is only returned when the host application configures a public path explicitly:
-
-```ts
-AsyncLibraryModule.forRoot({
-  exposeStatusController: false,
-  statusLocationBasePath: 'jobs',
-})
-```
-
-If neither the default controller nor a `statusLocationBasePath` is configured, the accepted response contains only:
-
-```json
-{
-  "status": "accepted"
-}
-```
-
-When `exposeStatusController` is `false`, the host application is responsible for exposing its own polling endpoint if it wants HTTP status lookup. A minimal controller looks like this:
-
-```ts
-import { Controller, Get, Inject, Param } from '@nestjs/common';
-import {
-  ASYNC_PATTERN_GET_STATUS,
-  AsyncStatusResponse,
-  IAsyncPatternGetStatus,
-} from '@gustavoarielms/nestjs-async-request-reply';
-
-@Controller('jobs')
-export class JobsStatusController {
-  constructor(
-    @Inject(ASYNC_PATTERN_GET_STATUS)
-    private readonly asyncStatus: IAsyncPatternGetStatus
-  ) {}
-
-  @Get('status/:id')
-  getStatus(@Param('id') id: string): Promise<AsyncStatusResponse> {
-    return this.asyncStatus.getStatus(id);
-  }
-}
-```
-
-If the host exposes that route publicly, it should also set the matching `statusLocationBasePath`:
-
-```ts
-AsyncLibraryModule.forRoot({
-  exposeStatusController: false,
-  statusLocationBasePath: 'jobs',
-})
-```
+The full status endpoint contract, including custom controllers, `statusLocationBasePath`, and polling responses, now lives in [docs/status-endpoint.md](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/docs/status-endpoint.md).
 
 ## Host background worker contract
 
