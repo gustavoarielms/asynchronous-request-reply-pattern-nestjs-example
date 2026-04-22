@@ -5,13 +5,7 @@ This is the shortest end-to-end setup to use the package in a host NestJS applic
 ## 1. Install
 
 ```bash
-npm install @gustavoarielms/nestjs-async-request-reply
-```
-
-If you consume it from GitHub Packages, configure `.npmrc` first:
-
-```ini
-@gustavoarielms:registry=https://npm.pkg.github.com
+npm install nestjs-async-request-reply
 ```
 
 ## 2. Configure BullMQ And The Library Module
@@ -19,7 +13,7 @@ If you consume it from GitHub Packages, configure `.npmrc` first:
 ```ts
 import { Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bullmq';
-import { AsyncLibraryModule } from '@gustavoarielms/nestjs-async-request-reply';
+import { AsyncLibraryModule } from 'nestjs-async-request-reply';
 
 @Module({
   imports: [
@@ -49,7 +43,7 @@ That gives you:
 
 ```ts
 import { Body, Controller, HttpCode, Post } from '@nestjs/common';
-import { Async, AsyncAcceptedResponse } from '@gustavoarielms/nestjs-async-request-reply';
+import { Async, AsyncAcceptedResponse } from 'nestjs-async-request-reply';
 
 @Controller('orders')
 export class OrdersController {

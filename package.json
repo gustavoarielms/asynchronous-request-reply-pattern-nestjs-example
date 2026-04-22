@@ -1,5 +1,5 @@
 {
-  "name": "@gustavoarielms/nestjs-async-request-reply",
+  "name": "nestjs-async-request-reply",
   "version": "0.0.10",
   "description": "NestJS library for asynchronous request-reply HTTP flows backed by BullMQ and Redis.",
   "author": "gustavoarielms",
@@ -26,17 +26,17 @@
     "README.md"
   ],
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "access": "public"
   },
   "engines": {
     "node": ">=20.11.0"
   },
   "scripts": {
     "build": "nest build",
-    "build:package": "tsc -p tsconfig.package.json",
+    "build:package": "tsc -p tsconfig.package.json --incremental false",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "pack:dry-run": "npm pack --dry-run",
-    "publish:github": "npm publish --registry=https://npm.pkg.github.com",
+    "publish:npm": "npm publish --access public",
     "redis:up": "docker compose up -d redis",
     "redis:down": "docker compose down",
     "smoke:example": "node ./scripts/smoke-example.mjs",

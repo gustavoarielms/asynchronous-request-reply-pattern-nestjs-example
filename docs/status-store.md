@@ -29,7 +29,7 @@ import {
   AsyncLibraryModule,
   AsyncStatusResponse,
   IAsyncStatusStore,
-} from '@gustavoarielms/nestjs-async-request-reply';
+} from 'nestjs-async-request-reply';
 
 @Injectable()
 export class CustomStatusStore implements IAsyncStatusStore {

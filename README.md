@@ -29,7 +29,7 @@ The package entrypoint resolves to:
 Typical consumer usage:
 
 ```ts
-import { AsyncLibraryModule, Async } from '@gustavoarielms/nestjs-async-request-reply';
+import { AsyncLibraryModule, Async } from 'nestjs-async-request-reply';
 ```
 
 The package entrypoint is intentionally narrow. It exposes the module, decorator, public response contracts, and DI-facing interfaces and tokens. Internal implementation details such as the interceptor and concrete services stay out of the public API.
@@ -83,35 +83,29 @@ In other words:
 The complete option reference now lives in [docs/module-options.md](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/docs/module-options.md).
 The status store contract and retention behavior are documented in [docs/status-store.md](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/docs/status-store.md).
 
-## GitHub Packages
+## npm
 
-This library is prepared to publish to GitHub Packages as:
+This library is prepared to publish to npm as:
 
 ```text
-@gustavoarielms/nestjs-async-request-reply
+nestjs-async-request-reply
 ```
 
-To install it from GitHub Packages, consumers need an `.npmrc` entry for the scope:
-
-```ini
-@gustavoarielms:registry=https://npm.pkg.github.com
-```
-
-Then they can install it with:
+Consumers can install it with:
 
 ```bash
-npm install @gustavoarielms/nestjs-async-request-reply
+npm install nestjs-async-request-reply
 ```
 
 To publish it manually from this repository:
 
 ```bash
-npm login --registry=https://npm.pkg.github.com
+npm login
 npm run build:package
-npm run publish:github
+npm run publish:npm
 ```
 
-The repository also includes [publish-package.yml](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/.github/workflows/publish-package.yml), which can publish the package to GitHub Packages when triggered manually.
+The repository also includes [publish-package.yml](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/.github/workflows/publish-package.yml), which can publish the package to npm when triggered manually.
 
 ## Release automation
 
@@ -123,7 +117,7 @@ The intended flow is:
 2. release-please opens or updates a release PR
 3. merge that release PR
 4. the same [release-please.yml](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/.github/workflows/release-please.yml) run creates the Git tag and GitHub Release
-5. when that same run actually creates a release, it checks out the release tag, builds the package, and publishes it to GitHub Packages
+5. when that same run actually creates a release, it checks out the release tag, builds the package, and publishes it to npm
 
 The initial release manifest lives in [release-please-config.json](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/release-please-config.json) and [.release-please-manifest.json](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/.release-please-manifest.json).
 

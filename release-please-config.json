@@ -3,7 +3,7 @@
   "packages": {
     ".": {
       "release-type": "node",
-      "package-name": "@gustavoarielms/nestjs-async-request-reply",
+      "package-name": "nestjs-async-request-reply",
       "include-v-in-tag": true,
       "bump-minor-pre-major": true
     }
