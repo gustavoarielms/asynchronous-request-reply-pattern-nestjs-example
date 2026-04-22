@@ -31,7 +31,7 @@ import {
   ASYNC_PATTERN_GET_STATUS,
   AsyncStatusResponse,
   IAsyncPatternGetStatus,
-} from '@gustavoarielms/nestjs-async-request-reply';
+} from 'nestjs-async-request-reply';
 
 @Controller('jobs')
 export class JobsStatusController {
