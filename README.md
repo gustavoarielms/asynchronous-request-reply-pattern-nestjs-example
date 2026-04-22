@@ -32,6 +32,22 @@ import { AsyncLibraryModule, Async } from '@gustavoarielms/nestjs-async-request-
 
 The package entrypoint is intentionally narrow. It exposes the module, decorator, public response contracts, and DI-facing interfaces and tokens. Internal implementation details such as the interceptor and concrete services stay out of the public API.
 
+The intended public surface is:
+
+- `AsyncLibraryModule`
+- `Async`
+- `AsyncModuleOptions`
+- `AsyncOptions`
+- `AsyncAcceptedResponse`
+- `AsyncStatusResponse`
+- `IAsyncPatternGetStatus`
+- `IAsyncPatternStartProcess`
+- `IAsyncStatusStore`
+- `ASYNC_PATTERN_GET_STATUS`
+- `ASYNC_STATUS_STORE`
+
+Internal wiring tokens and controller factories are not part of the package contract.
+
 ## Library wiring
 
 The host application is responsible for the global BullMQ/Redis connection:
