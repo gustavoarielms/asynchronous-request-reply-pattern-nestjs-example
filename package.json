@@ -1,6 +1,6 @@
 {
   "name": "nestjs-async-request-reply",
-  "version": "0.0.10",
+  "version": "0.1.0",
   "description": "NestJS library for asynchronous request-reply HTTP flows backed by BullMQ and Redis.",
   "author": "gustavoarielms",
   "license": "MIT",
