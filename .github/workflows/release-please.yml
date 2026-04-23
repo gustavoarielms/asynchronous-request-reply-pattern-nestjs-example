@@ -12,7 +12,6 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
-      packages: write
 
     steps:
       - name: Run release-please
@@ -24,18 +23,18 @@ jobs:
 
       - name: Checkout repository
         if: ${{ steps.release.outputs.release_created == 'true' }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
         if: ${{ steps.release.outputs.release_created == 'true' }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 20.20.2
           registry-url: https://registry.npmjs.org
 
       - name: Install dependencies
         if: ${{ steps.release.outputs.release_created == 'true' }}
-        run: npm install
+        run: npm ci
 
       - name: Build package
         if: ${{ steps.release.outputs.release_created == 'true' }}
