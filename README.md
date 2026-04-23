@@ -121,6 +121,7 @@ The intended flow is:
 5. when that same run actually creates a release, it checks out the release tag, builds the package, and publishes it to npm
 
 The initial release manifest lives in [release-please-config.json](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/release-please-config.json) and [.release-please-manifest.json](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/.release-please-manifest.json).
+Release hygiene expectations for changelog quality, breaking changes, and migration notes are documented in [docs/release-hygiene.md](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/docs/release-hygiene.md).
 
 ## Contribution flow
 
