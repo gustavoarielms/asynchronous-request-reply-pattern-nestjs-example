@@ -98,6 +98,11 @@ Consumers can install it with:
 npm install nestjs-async-request-reply
 ```
 
+Security note:
+
+- the package currently targets BullMQ `5.76.2` and newer compatible patch releases
+- consumers should avoid the previously used `5.74.1` line
+
 To publish it manually from this repository:
 
 ```bash
