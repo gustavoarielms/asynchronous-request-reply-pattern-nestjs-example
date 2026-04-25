@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/compare/nestjs-async-request-reply-v0.1.0...nestjs-async-request-reply-v0.1.1) (2026-04-25)
+
+
+### Bug Fixes
+
+* document bullmq security floor ([#64](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/issues/64)) ([cb5e205](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/commit/cb5e205dab1734e44aa7c05f92a53cc4fdfabfff))
+
 ## [0.1.0](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/compare/nestjs-async-request-reply-v0.0.10...nestjs-async-request-reply-v0.1.0) (2026-04-22)
 
 
