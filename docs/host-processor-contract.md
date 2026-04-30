@@ -8,6 +8,7 @@ The library does not implement any business worker for you. It only:
 - optionally exposes the polling endpoint
 
 The consuming application is still responsible for the background processor that handles the queued work.
+The library now ships `AsyncJobProcessor` as a reusable base class so the host does not need to reimplement status transitions around job execution.
 
 The status persistence layer has its own dedicated reference in [status-store.md](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/docs/status-store.md). This document focuses on the worker and processor responsibilities of the host application.
 
@@ -27,10 +28,17 @@ The example app does exactly that:
 
 ## Minimal Processor Example
 
+For the smallest host-side worker, extend `AsyncJobProcessor` and implement only the business handler:
+
 ```ts
 import { Inject, Injectable } from '@nestjs/common';
-import { Processor, WorkerHost } from '@nestjs/bullmq';
+import { Processor } from '@nestjs/bullmq';
 import { Job } from 'bullmq';
+import {
+  ASYNC_STATUS_STORE,
+  AsyncJobProcessor,
+  IAsyncStatusStore,
+} from 'nestjs-async-request-reply';
 
 export interface OrdersService {
   createOrder(data: unknown): Promise<unknown>;
@@ -38,19 +46,27 @@ export interface OrdersService {
 
 @Processor('async')
 @Injectable()
-export class OrdersProcessor extends WorkerHost {
+export class OrdersProcessor extends AsyncJobProcessor<unknown, unknown> {
   constructor(
-    @Inject('OrdersService')
-    private readonly ordersService: OrdersService
+    @Inject('OrdersService') private readonly ordersService: OrdersService,
+    @Inject(ASYNC_STATUS_STORE) asyncStatusStore: IAsyncStatusStore
   ) {
-    super();
+    super(asyncStatusStore);
   }
 
-  process(job: Job<unknown, unknown>): Promise<unknown> {
-    return this.ordersService.createOrder(job.data);
+  protected handle(payload: unknown, _job: Job<unknown, unknown>): Promise<unknown> {
+    return this.ordersService.createOrder(payload);
   }
 }
 ```
+
+`AsyncJobProcessor` standardizes:
+
+- `active` before business execution
+- `completed` with the returned result
+- `failed` with a normalized error message before rethrowing
+
+The host still owns the worker registration, queue binding, and business logic itself.
 
 ## Queue And Job Alignment
 
