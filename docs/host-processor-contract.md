@@ -10,7 +10,7 @@ The library does not implement any business worker for you. It only:
 The consuming application is still responsible for the background processor that handles the queued work.
 The library now ships `AsyncJobProcessor` as a reusable base class so the host does not need to reimplement status transitions around job execution.
 
-The status persistence layer has its own dedicated reference in [status-store.md](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/docs/status-store.md). This document focuses on the worker and processor responsibilities of the host application.
+The status persistence layer has its own dedicated reference in [status-store.md](status-store.md). This document focuses on the worker and processor responsibilities of the host application.
 
 ## Minimum Host Responsibilities
 
@@ -22,9 +22,9 @@ At minimum, the host application must provide:
 
 The example app does exactly that:
 
-- [example-async.module.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/apps/example/src/example/example-async.module.ts) configures BullMQ and imports `AsyncLibraryModule`
-- [business.interactor.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/apps/example/src/example/interactors/business.interactor.ts) is the BullMQ worker
-- [business.service.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/apps/example/src/example/services/business.service.ts) contains the example business logic
+- [example-async.module.ts](../apps/example/src/example/example-async.module.ts) configures BullMQ and imports `AsyncLibraryModule`
+- [business.interactor.ts](../apps/example/src/example/interactors/business.interactor.ts) is the BullMQ worker
+- [business.service.ts](../apps/example/src/example/services/business.service.ts) contains the example business logic
 
 ## Minimal Processor Example
 
