@@ -1,14 +1,14 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
 import {
   ASYNC_JOB_NAME,
   ASYNC_PATTERN_QUEUE,
   ASYNC_STATUS_LOCATION_BASE_PATH,
   ASYNC_STATUS_STORE,
-} from '../../lib/async/async.tokens';
-import { AsyncPatternService } from '../../lib/async/services/async-pattern.service';
+} from '../async.tokens';
+import { AsyncPatternService } from './async-pattern.service';
 
-describe('AsyncService', () => {
+describe('AsyncPatternService', () => {
   let service: AsyncPatternService;
   const queueMock = {
     add: jest.fn(),

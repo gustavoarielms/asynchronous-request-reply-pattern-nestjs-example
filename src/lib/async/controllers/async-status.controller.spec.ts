@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ASYNC_PATTERN_GET_STATUS } from '../../lib/async/async.tokens';
-import { createAsyncStatusController } from '../../lib/async/controllers/async-status.controller';
+import { ASYNC_PATTERN_GET_STATUS } from '../async.tokens';
+import { createAsyncStatusController } from './async-status.controller';
 
 describe('AsyncStatusController', () => {
   const AsyncStatusController = createAsyncStatusController('async-status');
