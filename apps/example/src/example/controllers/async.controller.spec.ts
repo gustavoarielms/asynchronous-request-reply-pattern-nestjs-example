@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ASYNC_PATTERN_START_PROCESS } from '../../lib/async/async.tokens';
-import { AsyncInterceptor } from '../../lib/async/interceptors/async.interceptor';
-import { ExampleAsyncController } from '../../../apps/example/src/example/controllers/async.controller';
+import { ASYNC_PATTERN_START_PROCESS } from '../../../../../src/lib/async/async.tokens';
+import { AsyncInterceptor } from '../../../../../src/lib/async/interceptors/async.interceptor';
+import { ExampleAsyncController } from './async.controller';
 
-describe('AsyncController', () => {
+describe('ExampleAsyncController', () => {
   let controller: ExampleAsyncController;
   const asyncPatternStartProcessMock = {
     startProcess: jest.fn(),
