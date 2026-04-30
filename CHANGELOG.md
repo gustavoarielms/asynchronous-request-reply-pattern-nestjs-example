@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/compare/nestjs-async-request-reply-v0.1.1...nestjs-async-request-reply-v0.2.0) (2026-04-30)
+
+
+### Features
+
+* add reusable async job processor ([#69](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/issues/69)) ([b861406](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/commit/b8614064fad069ccb933b68ba66c127b0c48326c))
+
 ## [0.1.1](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/compare/nestjs-async-request-reply-v0.1.0...nestjs-async-request-reply-v0.1.1) (2026-04-25)
 
 
