@@ -70,8 +70,13 @@ The library does not implement business processing for you. The host app must st
 
 ```ts
 import { Inject, Injectable } from '@nestjs/common';
-import { Processor, WorkerHost } from '@nestjs/bullmq';
+import { Processor } from '@nestjs/bullmq';
 import { Job } from 'bullmq';
+import {
+  ASYNC_STATUS_STORE,
+  AsyncJobProcessor,
+  IAsyncStatusStore,
+} from 'nestjs-async-request-reply';
 
 export interface OrdersService {
   createOrder(data: unknown): Promise<string>;
@@ -79,16 +84,16 @@ export interface OrdersService {
 
 @Processor('async')
 @Injectable()
-export class OrdersProcessor extends WorkerHost {
+export class OrdersProcessor extends AsyncJobProcessor<unknown, string> {
   constructor(
-    @Inject('OrdersService')
-    private readonly ordersService: OrdersService
+    @Inject('OrdersService') private readonly ordersService: OrdersService,
+    @Inject(ASYNC_STATUS_STORE) asyncStatusStore: IAsyncStatusStore
   ) {
-    super();
+    super(asyncStatusStore);
   }
 
-  process(job: Job<unknown, string>): Promise<string> {
-    return this.ordersService.createOrder(job.data);
+  protected handle(payload: unknown, _job: Job<unknown, string>): Promise<string> {
+    return this.ordersService.createOrder(payload);
   }
 }
 ```

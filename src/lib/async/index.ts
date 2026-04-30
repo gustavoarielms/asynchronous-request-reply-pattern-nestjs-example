@@ -7,6 +7,7 @@ export * from './interfaces/http/async-status-response.interface';
 export * from './interfaces/services/async-pattern-get-status.interface';
 export * from './interfaces/services/async-pattern-start-process.interface';
 export * from './interfaces/services/async-status-store.interface';
+export * from './processors/async-job.processor';
 export {
   ASYNC_PATTERN_GET_STATUS,
   ASYNC_STATUS_STORE,
