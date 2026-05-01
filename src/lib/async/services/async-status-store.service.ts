@@ -43,6 +43,14 @@ export class AsyncStatusStoreService {
     });
   }
 
+  async setWaitingExternal(jobId: string, result: AsyncStatusResult): Promise<void> {
+    await this.set(jobId, {
+      status: 'waiting_external',
+      result,
+      completed: false,
+    });
+  }
+
   async setCompleted(jobId: string, result: AsyncStatusResult): Promise<void> {
     await this.set(jobId, {
       status: 'completed',

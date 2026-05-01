@@ -18,6 +18,7 @@ describe('AsyncPatternService', () => {
     get: jest.fn(),
     setAccepted: jest.fn(),
     setActive: jest.fn(),
+    setWaitingExternal: jest.fn(),
     setCompleted: jest.fn(),
     setFailed: jest.fn(),
   };
@@ -318,6 +319,26 @@ describe('AsyncPatternService', () => {
       completed: false,
     });
     expect(asyncStatusStoreMock.setActive).toHaveBeenCalledWith('123');
+  });
+
+  it('should preserve waiting external status even when the initial BullMQ job completed', async () => {
+    asyncStatusStoreMock.get.mockResolvedValue({
+      status: 'waiting_external',
+      result: 'Waiting for provider webhook',
+      completed: false,
+    });
+    queueMock.getJob.mockResolvedValue({
+      getState: jest.fn().mockResolvedValue('completed'),
+      returnvalue: null,
+      failedReason: null,
+    });
+
+    await expect(service.getStatus('123')).resolves.toEqual({
+      status: 'waiting_external',
+      result: 'Waiting for provider webhook',
+      completed: false,
+    });
+    expect(asyncStatusStoreMock.setCompleted).not.toHaveBeenCalled();
   });
 
   it('should throw not found when the job does not exist', async () => {

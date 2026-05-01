@@ -28,6 +28,7 @@ import { Injectable } from '@nestjs/common';
 import {
   AsyncLibraryModule,
   AsyncStatusResponse,
+  AsyncStatusResult,
   IAsyncStatusStore,
 } from 'nestjs-async-request-reply';
 
@@ -45,11 +46,15 @@ export class CustomStatusStore implements IAsyncStatusStore {
     throw new Error('Not implemented');
   }
 
-  setCompleted(_jobId: string, _result: unknown): Promise<void> {
+  setWaitingExternal(_jobId: string, _result: AsyncStatusResult): Promise<void> {
     throw new Error('Not implemented');
   }
 
-  setFailed(_jobId: string, _result: unknown): Promise<void> {
+  setCompleted(_jobId: string, _result: AsyncStatusResult): Promise<void> {
+    throw new Error('Not implemented');
+  }
+
+  setFailed(_jobId: string, _result: AsyncStatusResult): Promise<void> {
     throw new Error('Not implemented');
   }
 }
