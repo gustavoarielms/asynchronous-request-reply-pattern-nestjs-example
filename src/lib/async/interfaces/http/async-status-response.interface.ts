@@ -33,7 +33,14 @@ export interface AsyncPendingResponse {
   completed: false;
 }
 
+export interface AsyncWaitingExternalResponse {
+  status: 'waiting_external';
+  result: AsyncStatusResult;
+  completed: false;
+}
+
 export type AsyncStatusResponse =
   | AsyncFailedResponse
   | AsyncCompletedResponse
-  | AsyncPendingResponse;
+  | AsyncPendingResponse
+  | AsyncWaitingExternalResponse;

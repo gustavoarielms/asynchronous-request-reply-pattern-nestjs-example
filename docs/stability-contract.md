@@ -18,6 +18,8 @@ The package entrypoint is intentionally narrow. The following exports are part o
 - `AsyncOptions`
 - `AsyncAcceptedResponse`
 - `AsyncStatusResponse`
+- `AsyncJobProcessor`
+- `AsyncExecutionMode`
 - `IAsyncPatternGetStatus`
 - `IAsyncPatternStartProcess`
 - `IAsyncStatusStore`
@@ -56,7 +58,7 @@ Current expectations:
 - `statusTtlSeconds` configures retention for the default Redis-backed status store
 - `statusStoreClass` lets the host replace the default status store implementation with its own injectable class implementing `IAsyncStatusStore`
 
-The full option reference stays in [module-options.md](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/docs/module-options.md).
+The full option reference stays in [module-options.md](module-options.md).
 
 ## Stable Status Endpoint Contract
 
@@ -102,8 +104,9 @@ GET /<statusBasePath>/status/:id
 
 - non-terminal polling states return `completed: false`
 - terminal polling states return `completed: true`
+- `waiting_external` means the initial BullMQ job started external work and the business process is waiting for a later webhook, event, or callback
 
-The detailed route and controller rules stay in [status-endpoint.md](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/docs/status-endpoint.md).
+The detailed route and controller rules stay in [status-endpoint.md](status-endpoint.md).
 
 ## Stable Status Store Contract
 
@@ -117,6 +120,7 @@ Stable pieces:
   - `get`
   - `setAccepted`
   - `setActive`
+  - `setWaitingExternal`
   - `setCompleted`
   - `setFailed`
 
@@ -126,7 +130,7 @@ Stable expectations:
 - the replacement store must implement `IAsyncStatusStore`
 - the default implementation remains Redis-backed unless explicitly replaced
 
-The detailed behavior and replacement guidance stay in [status-store.md](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/docs/status-store.md).
+The detailed behavior and replacement guidance stay in [status-store.md](status-store.md).
 
 ## What Is Still Flexible
 

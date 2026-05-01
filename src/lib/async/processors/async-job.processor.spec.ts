@@ -1,20 +1,36 @@
 import { Job } from 'bullmq';
 import { IAsyncStatusStore } from '../interfaces/services/async-status-store.interface';
-import { AsyncJobProcessor } from './async-job.processor';
+import { AsyncExecutionMode, AsyncJobProcessor } from './async-job.processor';
 
 class TestAsyncJobProcessor extends AsyncJobProcessor<{ id: string }, string> {
   constructor(
     asyncStatusStore: IAsyncStatusStore,
-    private readonly handler: (payload: { id: string }, job: Job<{ id: string }, string>) => Promise<string>
+    private readonly handler: (payload: { id: string }, job: Job<{ id: string }, string>) => Promise<string>,
+    private readonly executionMode: AsyncExecutionMode = 'resolve_now',
+    private readonly externalStarter: (
+      payload: { id: string },
+      job: Job<{ id: string }, string>
+    ) => Promise<string | undefined> = async () => undefined
   ) {
     super(asyncStatusStore);
   }
 
-  protected handle(
+  protected getExecutionMode(): AsyncExecutionMode {
+    return this.executionMode;
+  }
+
+  protected resolve(
     payload: { id: string },
     job: Job<{ id: string }, string>
   ): Promise<string> {
     return this.handler(payload, job);
+  }
+
+  protected startExternal(
+    payload: { id: string },
+    job: Job<{ id: string }, string>
+  ): Promise<string | undefined> {
+    return this.externalStarter(payload, job);
   }
 }
 
@@ -23,6 +39,7 @@ describe('AsyncJobProcessor', () => {
     get: jest.fn(),
     setAccepted: jest.fn(),
     setActive: jest.fn(),
+    setWaitingExternal: jest.fn(),
     setCompleted: jest.fn(),
     setFailed: jest.fn(),
   } as jest.Mocked<IAsyncStatusStore>;
@@ -60,6 +77,42 @@ describe('AsyncJobProcessor', () => {
 
     await expect(processor.process(createJob())).resolves.toBe('done:123');
     expect(asyncStatusStore.setCompleted).toHaveBeenCalledWith('job-1', 'done:123');
+  });
+
+  it('starts external work and stores the waiting status without resolving the job result', async () => {
+    const startExternal = jest.fn(async payload => `waiting:${payload.id}`);
+    const handler = jest.fn(async payload => `done:${payload.id}`);
+    const processor = new TestAsyncJobProcessor(
+      asyncStatusStore,
+      handler,
+      'wait_external',
+      startExternal
+    );
+
+    await expect(processor.process(createJob())).resolves.toBeUndefined();
+
+    expect(startExternal).toHaveBeenCalledWith(
+      { id: '123' },
+      expect.objectContaining({ id: 'job-1' })
+    );
+    expect(handler).not.toHaveBeenCalled();
+    expect(asyncStatusStore.setWaitingExternal).toHaveBeenCalledWith('job-1', 'waiting:123');
+    expect(asyncStatusStore.setCompleted).not.toHaveBeenCalled();
+  });
+
+  it('stores a default waiting message when external work does not return one', async () => {
+    const processor = new TestAsyncJobProcessor(
+      asyncStatusStore,
+      async payload => `done:${payload.id}`,
+      'wait_external'
+    );
+
+    await processor.process(createJob());
+
+    expect(asyncStatusStore.setWaitingExternal).toHaveBeenCalledWith(
+      'job-1',
+      'Waiting for external response'
+    );
   });
 
   it('stores the error message and rethrows original errors', async () => {

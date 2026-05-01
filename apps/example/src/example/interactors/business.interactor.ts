@@ -16,7 +16,7 @@ export class BusinessInteractor extends AsyncJobProcessor<AsyncRequestData, stri
     super(asyncStatusStore);
   }
 
-  protected handle(jobData: AsyncRequestData, _job: Job<AsyncRequestData, string, string>): Promise<string> {
+  protected resolve(jobData: AsyncRequestData, _job: Job<AsyncRequestData, string, string>): Promise<string> {
     return this.businessService.save(jobData);
   }
 }

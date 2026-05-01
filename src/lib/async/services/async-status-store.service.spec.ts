@@ -156,4 +156,21 @@ describe('AsyncStatusStoreService', () => {
       86400
     );
   });
+
+  it('stores waiting external results using the default TTL', async () => {
+    const service = await buildService();
+
+    await service.setWaitingExternal('123', 'Waiting for provider webhook');
+
+    expect(redisClientMock.set).toHaveBeenCalledWith(
+      'async:status:123',
+      JSON.stringify({
+        status: 'waiting_external',
+        result: 'Waiting for provider webhook',
+        completed: false,
+      }),
+      'EX',
+      86400
+    );
+  });
 });
