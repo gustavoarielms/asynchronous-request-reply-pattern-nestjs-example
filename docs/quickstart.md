@@ -154,7 +154,7 @@ Typical responses:
 
 After the basic setup works:
 
-- module options: [module-options.md](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/docs/module-options.md)
-- status endpoint contract: [status-endpoint.md](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/docs/status-endpoint.md)
-- host worker responsibilities: [host-processor-contract.md](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/docs/host-processor-contract.md)
-- status store contract: [status-store.md](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/docs/status-store.md)
+- module options: [module-options.md](module-options.md)
+- status endpoint contract: [status-endpoint.md](status-endpoint.md)
+- host worker responsibilities: [host-processor-contract.md](host-processor-contract.md)
+- status store contract: [status-store.md](status-store.md)

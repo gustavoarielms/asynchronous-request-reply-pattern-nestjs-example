@@ -4,14 +4,14 @@ Example NestJS application that implements the [Asynchronous Request-Reply patte
 
 The API accepts a request, enqueues the work, responds with `202 Accepted`, and exposes a polling endpoint to check the job status later.
 
-The repository now also exposes the reusable async core as an npm package entrypoint from [src/lib/async/index.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/src/lib/async/index.ts).
+The repository now also exposes the reusable async core as an npm package entrypoint from [src/lib/async/index.ts](src/lib/async/index.ts).
 
-If you want the shortest integration path first, start with [docs/quickstart.md](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/docs/quickstart.md).
-The current stability contract for the package is documented in [docs/stability-contract.md](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/docs/stability-contract.md).
+If you want the shortest integration path first, start with [docs/quickstart.md](docs/quickstart.md).
+The current stability contract for the package is documented in [docs/stability-contract.md](docs/stability-contract.md).
 
 ## License
 
-This project is available under the [MIT License](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/LICENSE).
+This project is available under the [MIT License](LICENSE).
 
 ## Package output
 
@@ -24,8 +24,8 @@ npm run pack:dry-run
 
 The package entrypoint resolves to:
 
-- [dist/lib/async/index.js](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/dist/lib/async/index.js)
-- [dist/lib/async/index.d.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/dist/lib/async/index.d.ts)
+- [dist/lib/async/index.js](dist/lib/async/index.js)
+- [dist/lib/async/index.d.ts](dist/lib/async/index.d.ts)
 
 Typical consumer usage:
 
@@ -81,8 +81,8 @@ In other words:
 - `jobName` controls the BullMQ job name used when the library enqueues work.
 - The library uses a status store contract internally and ships a Redis-backed implementation by default.
 
-The complete option reference now lives in [docs/module-options.md](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/docs/module-options.md).
-The status store contract and retention behavior are documented in [docs/status-store.md](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/docs/status-store.md).
+The complete option reference now lives in [docs/module-options.md](docs/module-options.md).
+The status store contract and retention behavior are documented in [docs/status-store.md](docs/status-store.md).
 
 ## npm
 
@@ -111,26 +111,26 @@ npm run build:package
 npm run publish:npm
 ```
 
-The repository also includes [publish-package.yml](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/.github/workflows/publish-package.yml), which can publish the package to npm when triggered manually.
+The repository also includes [publish-package.yml](.github/workflows/publish-package.yml), which can publish the package to npm when triggered manually.
 
 ## Release automation
 
-The repository also includes [release-please.yml](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/.github/workflows/release-please.yml), powered by [release-please](https://github.com/googleapis/release-please).
+The repository also includes [release-please.yml](.github/workflows/release-please.yml), powered by [release-please](https://github.com/googleapis/release-please).
 
 The intended flow is:
 
 1. merge regular changes into `main`
 2. release-please opens or updates a release PR
 3. merge that release PR
-4. the same [release-please.yml](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/.github/workflows/release-please.yml) run creates the Git tag and GitHub Release
+4. the same [release-please.yml](.github/workflows/release-please.yml) run creates the Git tag and GitHub Release
 5. when that same run actually creates a release, it checks out the release tag, builds the package, and publishes it to npm
 
-The initial release manifest lives in [release-please-config.json](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/release-please-config.json) and [.release-please-manifest.json](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/.release-please-manifest.json).
-Release hygiene expectations for changelog quality, breaking changes, and migration notes are documented in [docs/release-hygiene.md](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/docs/release-hygiene.md).
+The initial release manifest lives in [release-please-config.json](release-please-config.json) and [.release-please-manifest.json](.release-please-manifest.json).
+Release hygiene expectations for changelog quality, breaking changes, and migration notes are documented in [docs/release-hygiene.md](docs/release-hygiene.md).
 
 ## Contribution flow
 
-Branch naming, PR targeting, and PR title guidance for this repository are documented in [CONTRIBUTING.md](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/CONTRIBUTING.md).
+Branch naming, PR targeting, and PR title guidance for this repository are documented in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## How it works
 
@@ -155,7 +155,7 @@ AsyncLibraryModule.forRoot({
 
 That keeps the polling endpoint in the reusable core instead of duplicating a controller in each host app.
 
-The full status endpoint contract, including custom controllers, `statusLocationBasePath`, and polling responses, now lives in [docs/status-endpoint.md](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/docs/status-endpoint.md).
+The full status endpoint contract, including custom controllers, `statusLocationBasePath`, and polling responses, now lives in [docs/status-endpoint.md](docs/status-endpoint.md).
 
 ## Host background worker contract
 
@@ -167,7 +167,7 @@ The host application still owns:
 - the business logic that consumes `job.data`
 - any custom HTTP status endpoint when the default one is disabled
 
-The full contract, examples, and guidance for `queueName`, `jobName`, and custom status stores now live in [docs/host-processor-contract.md](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/docs/host-processor-contract.md).
+The full contract, examples, and guidance for `queueName`, `jobName`, and custom status stores now live in [docs/host-processor-contract.md](docs/host-processor-contract.md).
 
 In short: the library owns the async HTTP pattern and status contract; the host application owns the actual background business work.
 
@@ -408,7 +408,7 @@ START_APP=false APP_URL=http://127.0.0.1:3000 npm run smoke:example
 
 ## CI
 
-The repository includes [example-tests.yml](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/.github/workflows/example-tests.yml), a GitHub Actions workflow that:
+The repository includes [example-tests.yml](.github/workflows/example-tests.yml), a GitHub Actions workflow that:
 
 - starts Redis as a service
 - installs dependencies
@@ -419,9 +419,9 @@ The repository includes [example-tests.yml](/Users/gustavo/Patxa/asynchronous-re
 
 ## Implementation notes
 
-- The reusable async core lives in [src/lib/async/async.module.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/src/lib/async/async.module.ts).
-- The example app wiring lives in [apps/example/src/example/example-async.module.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/apps/example/src/example/example-async.module.ts).
-- The example async entrypoint is [apps/example/src/example/controllers/async.controller.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/apps/example/src/example/controllers/async.controller.ts).
-- The optional default polling controller lives in [src/lib/async/controllers/async-status.controller.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/src/lib/async/controllers/async-status.controller.ts).
-- Queue orchestration for the reusable core lives in [src/lib/async/services/async-pattern.service.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/src/lib/async/services/async-pattern.service.ts).
-- Sample business work lives in [apps/example/src/example/services/business.service.ts](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/apps/example/src/example/services/business.service.ts).
+- The reusable async core lives in [src/lib/async/async.module.ts](src/lib/async/async.module.ts).
+- The example app wiring lives in [apps/example/src/example/example-async.module.ts](apps/example/src/example/example-async.module.ts).
+- The example async entrypoint is [apps/example/src/example/controllers/async.controller.ts](apps/example/src/example/controllers/async.controller.ts).
+- The optional default polling controller lives in [src/lib/async/controllers/async-status.controller.ts](src/lib/async/controllers/async-status.controller.ts).
+- Queue orchestration for the reusable core lives in [src/lib/async/services/async-pattern.service.ts](src/lib/async/services/async-pattern.service.ts).
+- Sample business work lives in [apps/example/src/example/services/business.service.ts](apps/example/src/example/services/business.service.ts).

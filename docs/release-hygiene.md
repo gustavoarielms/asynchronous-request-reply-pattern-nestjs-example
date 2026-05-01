@@ -30,7 +30,7 @@ If the answer to breaking changes or migration is "no", that should still be eas
 
 ## Changelog Expectations
 
-The generated [CHANGELOG.md](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/CHANGELOG.md) is the baseline release history, but it is not enough by itself if a release needs interpretation.
+The generated [CHANGELOG.md](../CHANGELOG.md) is the baseline release history, but it is not enough by itself if a release needs interpretation.
 
 For routine releases, the generated entry is acceptable when it is already clear and low-risk.
 
@@ -104,7 +104,7 @@ Examples:
 
 ## Relationship To Stability Contract
 
-Use [stability-contract.md](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/docs/stability-contract.md) as the reference for what should be treated as stable.
+Use [stability-contract.md](stability-contract.md) as the reference for what should be treated as stable.
 
 If a release changes something declared stable there, assume it requires:
 

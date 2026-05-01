@@ -56,7 +56,7 @@ Current expectations:
 - `statusTtlSeconds` configures retention for the default Redis-backed status store
 - `statusStoreClass` lets the host replace the default status store implementation with its own injectable class implementing `IAsyncStatusStore`
 
-The full option reference stays in [module-options.md](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/docs/module-options.md).
+The full option reference stays in [module-options.md](module-options.md).
 
 ## Stable Status Endpoint Contract
 
@@ -103,7 +103,7 @@ GET /<statusBasePath>/status/:id
 - non-terminal polling states return `completed: false`
 - terminal polling states return `completed: true`
 
-The detailed route and controller rules stay in [status-endpoint.md](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/docs/status-endpoint.md).
+The detailed route and controller rules stay in [status-endpoint.md](status-endpoint.md).
 
 ## Stable Status Store Contract
 
@@ -126,7 +126,7 @@ Stable expectations:
 - the replacement store must implement `IAsyncStatusStore`
 - the default implementation remains Redis-backed unless explicitly replaced
 
-The detailed behavior and replacement guidance stay in [status-store.md](/Users/gustavo/Patxa/asynchronous-request-reply-pattern-nestjs-example/docs/status-store.md).
+The detailed behavior and replacement guidance stay in [status-store.md](status-store.md).
 
 ## What Is Still Flexible
 
