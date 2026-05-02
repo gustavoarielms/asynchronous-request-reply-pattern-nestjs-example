@@ -58,6 +58,10 @@ export class AsyncPatternService implements IAsyncPatternStartProcess, IAsyncPat
     const state = await job.getState() as AsyncPendingQueueState | 'completed' | 'failed';
     const result = job.returnvalue;
 
+    if (storedStatus?.status === 'waiting_external') {
+      return storedStatus;
+    }
+
     if (state === 'failed') {
       const response: AsyncFailedResponse = {
         status: state,

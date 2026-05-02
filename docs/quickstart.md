@@ -92,7 +92,7 @@ export class OrdersProcessor extends AsyncJobProcessor<unknown, string> {
     super(asyncStatusStore);
   }
 
-  protected handle(payload: unknown, _job: Job<unknown, string>): Promise<string> {
+  protected resolve(payload: unknown, _job: Job<unknown, string>): Promise<string> {
     return this.ordersService.createOrder(payload);
   }
 }
@@ -156,5 +156,5 @@ After the basic setup works:
 
 - module options: [module-options.md](module-options.md)
 - status endpoint contract: [status-endpoint.md](status-endpoint.md)
-- host worker responsibilities: [host-processor-contract.md](host-processor-contract.md)
+- host worker responsibilities, including direct completion and external webhook/event waits: [host-processor-contract.md](host-processor-contract.md)
 - status store contract: [status-store.md](status-store.md)

@@ -18,6 +18,10 @@ class CustomStatusStore implements IAsyncStatusStore {
     return Promise.resolve();
   }
 
+  setWaitingExternal(_jobId: string, _result: AsyncStatusResult): Promise<void> {
+    return Promise.resolve();
+  }
+
   setCompleted(_jobId: string, _result: AsyncStatusResult): Promise<void> {
     return Promise.resolve();
   }

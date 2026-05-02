@@ -18,6 +18,8 @@ The package entrypoint is intentionally narrow. The following exports are part o
 - `AsyncOptions`
 - `AsyncAcceptedResponse`
 - `AsyncStatusResponse`
+- `AsyncJobProcessor`
+- `AsyncExecutionMode`
 - `IAsyncPatternGetStatus`
 - `IAsyncPatternStartProcess`
 - `IAsyncStatusStore`
@@ -102,6 +104,7 @@ GET /<statusBasePath>/status/:id
 
 - non-terminal polling states return `completed: false`
 - terminal polling states return `completed: true`
+- `waiting_external` means the initial BullMQ job started external work and the business process is waiting for a later webhook, event, or callback
 
 The detailed route and controller rules stay in [status-endpoint.md](status-endpoint.md).
 
@@ -117,6 +120,7 @@ Stable pieces:
   - `get`
   - `setAccepted`
   - `setActive`
+  - `setWaitingExternal`
   - `setCompleted`
   - `setFailed`
 

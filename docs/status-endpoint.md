@@ -89,6 +89,16 @@ Pending:
 }
 ```
 
+Waiting for an external webhook, event, or callback:
+
+```json
+{
+  "status": "waiting_external",
+  "result": "Waiting for external provider",
+  "completed": false
+}
+```
+
 Completed:
 
 ```json

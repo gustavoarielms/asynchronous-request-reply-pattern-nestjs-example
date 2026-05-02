@@ -43,6 +43,8 @@ The intended public surface is:
 - `AsyncOptions`
 - `AsyncAcceptedResponse`
 - `AsyncStatusResponse`
+- `AsyncJobProcessor`
+- `AsyncExecutionMode`
 - `IAsyncPatternGetStatus`
 - `IAsyncPatternStartProcess`
 - `IAsyncStatusStore`
@@ -170,6 +172,13 @@ The host application still owns:
 The full contract, examples, and guidance for `queueName`, `jobName`, and custom status stores now live in [docs/host-processor-contract.md](docs/host-processor-contract.md).
 
 In short: the library owns the async HTTP pattern and status contract; the host application owns the actual background business work.
+
+Host processors can use two execution modes:
+
+- implement `resolve(...)` for jobs that can complete inside the worker
+- override `getExecutionMode(...)` and implement `startExternal(...)` for jobs that start work in another system and wait for a later webhook or message
+
+The external wait mode stores `waiting_external` and lets the initial BullMQ job finish without blocking the worker. The webhook or external event should enqueue a continuation job or update the original status when the external work is done.
 
 By default, the decorator only allows `POST`, `PUT`, and `PATCH`. Exceptional cases such as `GET` must be enabled explicitly with `allowMethods`, for example `@Async({ allowMethods: ['GET'] })`.
 
@@ -307,6 +316,16 @@ Failed job:
   "status": "failed",
   "result": "Simulated example failure for fail:demo",
   "completed": true
+}
+```
+
+Waiting for an external webhook or event:
+
+```json
+{
+  "status": "waiting_external",
+  "result": "Waiting for external provider",
+  "completed": false
 }
 ```
 
