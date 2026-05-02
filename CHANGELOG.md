@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/compare/nestjs-async-request-reply-v0.2.0...nestjs-async-request-reply-v0.3.0) (2026-05-02)
+
+
+### Features
+
+* **async:** support external wait processors ([#73](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/issues/73)) ([da17f49](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/commit/da17f49ce6c223081124abf1b2539240f7e51728))
+
 ## [0.2.0](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/compare/nestjs-async-request-reply-v0.1.1...nestjs-async-request-reply-v0.2.0) (2026-04-30)
 
 
