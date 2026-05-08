@@ -56,6 +56,7 @@ describe('AsyncPatternService', () => {
 
   it('should enqueue the request data and return an accepted response', async () => {
     queueMock.add.mockResolvedValue({ id: '123' });
+    asyncStatusStoreMock.get.mockResolvedValue(null);
 
     await expect(
       service.startProcess({ name: 'job', milliseconds: 10 })
@@ -68,6 +69,23 @@ describe('AsyncPatternService', () => {
       milliseconds: 10,
     });
     expect(asyncStatusStoreMock.setAccepted).toHaveBeenCalledWith('123');
+  });
+
+  it('should not overwrite a status written by a fast worker while starting the process', async () => {
+    queueMock.add.mockResolvedValue({ id: '123' });
+    asyncStatusStoreMock.get.mockResolvedValue({
+      status: 'waiting_external',
+      result: 'Waiting for webhook',
+      completed: false,
+    });
+
+    await expect(
+      service.startProcess({ name: 'job', milliseconds: 0, mode: 'external' })
+    ).resolves.toEqual({
+      status: 'accepted',
+      location: '/async-status/status/123',
+    });
+    expect(asyncStatusStoreMock.setAccepted).not.toHaveBeenCalled();
   });
 
   it('should build the accepted location using the configured status base path', async () => {
@@ -337,6 +355,26 @@ describe('AsyncPatternService', () => {
       status: 'waiting_external',
       result: 'Waiting for provider webhook',
       completed: false,
+    });
+    expect(asyncStatusStoreMock.setCompleted).not.toHaveBeenCalled();
+  });
+
+  it('should preserve a completed store status when a webhook completes an external process', async () => {
+    asyncStatusStoreMock.get.mockResolvedValue({
+      status: 'completed',
+      result: 'Webhook completed',
+      completed: true,
+    });
+    queueMock.getJob.mockResolvedValue({
+      getState: jest.fn().mockResolvedValue('completed'),
+      returnvalue: null,
+      failedReason: null,
+    });
+
+    await expect(service.getStatus('123')).resolves.toEqual({
+      status: 'completed',
+      result: 'Webhook completed',
+      completed: true,
     });
     expect(asyncStatusStoreMock.setCompleted).not.toHaveBeenCalled();
   });

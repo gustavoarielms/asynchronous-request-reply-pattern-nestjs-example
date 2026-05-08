@@ -10,7 +10,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { lastValueFrom } from 'rxjs';
 import { of } from 'rxjs';
 import { ExampleAsyncController } from '../apps/example/src/example/controllers/async.controller';
-import { ASYNC_PATTERN_GET_STATUS, ASYNC_PATTERN_START_PROCESS } from '../src/lib/async/async.tokens';
+import {
+  ASYNC_PATTERN_GET_STATUS,
+  ASYNC_PATTERN_START_PROCESS,
+  ASYNC_STATUS_STORE,
+} from '../src/lib/async/async.tokens';
 import { createAsyncStatusController } from '../src/lib/async/controllers/async-status.controller';
 import { Async, ASYNC_OPTIONS } from '../src/lib/async/decorators/async.decorator';
 import { AsyncInterceptor } from '../src/lib/async/interceptors/async.interceptor';
@@ -49,6 +53,9 @@ describe('Async flow integration', () => {
   const asyncPatternGetStatusMock = {
     getStatus: jest.fn<Promise<AsyncStatusResponse>, []>(),
   };
+  const asyncStatusStoreMock = {
+    setCompleted: jest.fn(),
+  };
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -62,6 +69,10 @@ describe('Async flow integration', () => {
         {
           provide: ASYNC_PATTERN_GET_STATUS,
           useValue: asyncPatternGetStatusMock,
+        },
+        {
+          provide: ASYNC_STATUS_STORE,
+          useValue: asyncStatusStoreMock,
         },
       ],
     }).compile();
