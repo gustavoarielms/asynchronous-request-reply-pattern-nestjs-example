@@ -3,7 +3,7 @@ import { Processor } from '@nestjs/bullmq';
 import { Job } from 'bullmq';
 import { ASYNC_STATUS_STORE } from '../../../../../src/lib/async/async.tokens';
 import { IAsyncStatusStore } from '../../../../../src/lib/async/interfaces/services/async-status-store.interface';
-import { AsyncJobProcessor } from '../../../../../src/lib/async/processors/async-job.processor';
+import { AsyncExecutionMode, AsyncJobProcessor } from '../../../../../src/lib/async/processors/async-job.processor';
 import { AsyncRequestData } from '../interfaces/http/async-request-body.interface';
 import { IBusinessService } from '../interfaces/services/business-service.interface';
 
@@ -18,5 +18,13 @@ export class BusinessInteractor extends AsyncJobProcessor<AsyncRequestData, stri
 
   protected resolve(jobData: AsyncRequestData, _job: Job<AsyncRequestData, string, string>): Promise<string> {
     return this.businessService.save(jobData);
+  }
+
+  protected getExecutionMode(jobData: AsyncRequestData): AsyncExecutionMode {
+    return jobData.mode === 'external' ? 'wait_external' : 'resolve_now';
+  }
+
+  protected async startExternal(jobData: AsyncRequestData): Promise<string> {
+    return `Waiting for webhook: ${jobData.name}`;
   }
 }

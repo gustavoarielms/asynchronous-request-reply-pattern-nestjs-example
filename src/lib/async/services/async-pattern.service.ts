@@ -30,14 +30,19 @@ export class AsyncPatternService implements IAsyncPatternStartProcess, IAsyncPat
 
   async startProcess(data: unknown): Promise<AsyncAcceptedResponse> {
     const job = await this.asyncQueue.add(this.jobName, data);
-    await this.asyncStatusStore.setAccepted(String(job.id));
+    const jobId = String(job.id);
+    const existingStatus = await this.asyncStatusStore.get(jobId);
+
+    if (!existingStatus) {
+      await this.asyncStatusStore.setAccepted(jobId);
+    }
 
     const response: AsyncAcceptedResponse = {
       status: 'accepted',
     };
 
     if (this.statusLocationBasePath) {
-      response.location = buildStatusLocation(this.statusLocationBasePath, String(job.id));
+      response.location = buildStatusLocation(this.statusLocationBasePath, jobId);
     }
 
     return response;
@@ -59,6 +64,10 @@ export class AsyncPatternService implements IAsyncPatternStartProcess, IAsyncPat
     const result = job.returnvalue;
 
     if (storedStatus?.status === 'waiting_external') {
+      return storedStatus;
+    }
+
+    if (storedStatus?.completed) {
       return storedStatus;
     }
 

@@ -116,6 +116,28 @@ async function getStatus(location) {
   return { httpStatus: response.status, payload };
 }
 
+function getJobId(location) {
+  const id = location.split('/').pop();
+
+  if (!id) {
+    fail(`Unable to extract job id from location ${location}`);
+  }
+
+  return id;
+}
+
+async function completeWebhook(jobId, result) {
+  const response = await fetch(`${appUrl}/async/webhook/${jobId}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ result }),
+  });
+
+  if (response.status !== 204) {
+    fail(`Expected webhook to return 204 No Content, got ${response.status}`);
+  }
+}
+
 async function assertImmediateStatus(location) {
   const status = await getStatus(location);
 
@@ -158,6 +180,30 @@ async function waitForTerminal(location) {
   }
 
   fail(`Job at ${location} did not reach a terminal state within ${terminalTimeoutMs}ms`);
+}
+
+async function waitForWaitingExternal(location) {
+  const deadline = Date.now() + terminalTimeoutMs;
+
+  while (Date.now() < deadline) {
+    const status = await getStatus(location);
+
+    if (status.httpStatus !== 200) {
+      fail(`Unexpected status code ${status.httpStatus} for ${location}`);
+    }
+
+    if (status.payload.status === 'waiting_external') {
+      return status.payload;
+    }
+
+    if (status.payload.completed) {
+      fail(`Expected waiting_external before terminal state, got ${JSON.stringify(status.payload)}`);
+    }
+
+    await delay(pollIntervalMs);
+  }
+
+  fail(`Job at ${location} did not reach waiting_external within ${terminalTimeoutMs}ms`);
 }
 
 async function assertSuccessCase() {
@@ -203,6 +249,24 @@ async function assertLongRunningCase() {
   }
 }
 
+async function assertWebhookCase() {
+  const location = await createJob({ name: 'smoke-webhook', milliseconds: 0, mode: 'external' });
+  await assertImmediateStatus(location);
+  const waitingStatus = await waitForWaitingExternal(location);
+
+  if (waitingStatus.status !== 'waiting_external') {
+    fail(`Expected waiting_external before webhook, got ${JSON.stringify(waitingStatus)}`);
+  }
+
+  await completeWebhook(getJobId(location), 'Webhook completed: smoke-webhook');
+
+  const { payload } = await waitForTerminal(location);
+
+  if (payload.status !== 'completed' || payload.result !== 'Webhook completed: smoke-webhook') {
+    fail(`Unexpected webhook completion payload: ${JSON.stringify(payload)}`);
+  }
+}
+
 async function run() {
   if (shouldStartApp) {
     appPort = await getAvailablePort(requestedPort);
@@ -222,6 +286,7 @@ async function run() {
     await assertSuccessCase();
     await assertFailureCase();
     await assertLongRunningCase();
+    await assertWebhookCase();
     log('Smoke test passed');
   } finally {
     if (appProcess) {
