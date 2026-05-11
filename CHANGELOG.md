@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/compare/nestjs-async-request-reply-v0.3.1...nestjs-async-request-reply-v0.4.0) (2026-05-11)
+
+
+### Features
+
+* add webhook failover resolver ([#85](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/issues/85)) ([279d066](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/commit/279d066dcf8251a23170695c7f87fed5151f27e6))
+
 ## [0.3.1](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/compare/nestjs-async-request-reply-v0.3.0...nestjs-async-request-reply-v0.3.1) (2026-05-08)
 
 
