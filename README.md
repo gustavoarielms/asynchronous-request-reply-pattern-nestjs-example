@@ -43,6 +43,7 @@ The intended public surface is:
 - `AsyncOptions`
 - `AsyncAcceptedResponse`
 - `AsyncStatusResponse`
+- `IAsyncExternalStatusResolver`
 - `AsyncJobProcessor`
 - `AsyncExecutionMode`
 - `IAsyncPatternGetStatus`
@@ -179,6 +180,8 @@ Host processors can use two execution modes:
 - override `getExecutionMode(...)` and implement `startExternal(...)` for jobs that start work in another system and wait for a later webhook or message
 
 The external wait mode stores `waiting_external` and lets the initial BullMQ job finish without blocking the worker. The webhook or external event should enqueue a continuation job or update the original status when the external work is done.
+
+If the webhook may be lost, the host can configure `externalStatusResolverClass` as an optional failover. While the stored status is `waiting_external`, the status endpoint can ask the external provider for the final state and persist `completed` or `failed` when the provider has a terminal answer.
 
 By default, the decorator only allows `POST`, `PUT`, and `PATCH`. Exceptional cases such as `GET` must be enabled explicitly with `allowMethods`, for example `@Async({ allowMethods: ['GET'] })`.
 

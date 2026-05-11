@@ -1,6 +1,7 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException, Optional } from '@nestjs/common';
 import { Queue } from 'bullmq';
 import {
+  ASYNC_EXTERNAL_STATUS_RESOLVER,
   ASYNC_JOB_NAME,
   ASYNC_PATTERN_QUEUE,
   ASYNC_STATUS_LOCATION_BASE_PATH,
@@ -13,7 +14,9 @@ import {
   AsyncPendingQueueState,
   AsyncStatusResponse,
   AsyncStatusResult,
+  AsyncWaitingExternalResponse,
 } from '../interfaces/http/async-status-response.interface';
+import { IAsyncExternalStatusResolver } from '../interfaces/services/async-external-status-resolver.interface';
 import { IAsyncPatternGetStatus } from '../interfaces/services/async-pattern-get-status.interface';
 import { IAsyncPatternStartProcess } from '../interfaces/services/async-pattern-start-process.interface';
 import { IAsyncStatusStore } from '../interfaces/services/async-status-store.interface';
@@ -25,7 +28,10 @@ export class AsyncPatternService implements IAsyncPatternStartProcess, IAsyncPat
     @Inject(ASYNC_PATTERN_QUEUE) private readonly asyncQueue: Queue<unknown>,
     @Inject(ASYNC_JOB_NAME) private readonly jobName: string,
     @Inject(ASYNC_STATUS_STORE) private readonly asyncStatusStore: IAsyncStatusStore,
-    @Inject(ASYNC_STATUS_LOCATION_BASE_PATH) private readonly statusLocationBasePath: string
+    @Inject(ASYNC_STATUS_LOCATION_BASE_PATH) private readonly statusLocationBasePath: string,
+    @Optional()
+    @Inject(ASYNC_EXTERNAL_STATUS_RESOLVER)
+    private readonly externalStatusResolver?: IAsyncExternalStatusResolver
   ) {}
 
   async startProcess(data: unknown): Promise<AsyncAcceptedResponse> {
@@ -64,7 +70,7 @@ export class AsyncPatternService implements IAsyncPatternStartProcess, IAsyncPat
     const result = job.returnvalue;
 
     if (storedStatus?.status === 'waiting_external') {
-      return storedStatus;
+      return this.resolveWaitingExternalStatus(jobId, storedStatus, job.data);
     }
 
     if (storedStatus?.completed) {
@@ -111,6 +117,39 @@ export class AsyncPatternService implements IAsyncPatternStartProcess, IAsyncPat
 
   private resolveCompletedResult(result: unknown): AsyncStatusResult {
     return result === undefined ? 'Processing' : this.toStatusResult(result);
+  }
+
+  private async resolveWaitingExternalStatus(
+    jobId: string,
+    waitingStatus: AsyncWaitingExternalResponse,
+    payload: unknown
+  ): Promise<AsyncStatusResponse> {
+    if (!this.externalStatusResolver) {
+      return waitingStatus;
+    }
+
+    const externalStatus = await this.externalStatusResolver.resolveExternalStatus({
+      jobId,
+      payload,
+      waitingStatus,
+    });
+
+    if (!externalStatus) {
+      return waitingStatus;
+    }
+
+    if (externalStatus.status === 'completed') {
+      await this.asyncStatusStore.setCompleted(jobId, externalStatus.result);
+      return externalStatus;
+    }
+
+    if (externalStatus.status === 'failed') {
+      await this.asyncStatusStore.setFailed(jobId, externalStatus.result);
+      return externalStatus;
+    }
+
+    await this.asyncStatusStore.setWaitingExternal(jobId, externalStatus.result);
+    return externalStatus;
   }
 
   private resolveInProgressResult(result: unknown): AsyncStatusResult {

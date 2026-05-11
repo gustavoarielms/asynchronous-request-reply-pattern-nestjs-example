@@ -1,6 +1,7 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { BullModule, getQueueToken } from '@nestjs/bullmq';
 import {
+  ASYNC_EXTERNAL_STATUS_RESOLVER,
   ASYNC_JOB_NAME,
   ASYNC_MODULE_OPTIONS,
   ASYNC_PATTERN_GET_STATUS,
@@ -25,6 +26,7 @@ const DEFAULT_ASYNC_MODULE_OPTIONS: Required<AsyncModuleOptions> = {
   statusLocationBasePath: '',
   statusTtlSeconds: 60 * 60 * 24,
   statusStoreClass: AsyncStatusStoreService,
+  externalStatusResolverClass: undefined,
 };
 
 function assertNonEmptyStringOption(value: string | undefined, optionName: string): void {
@@ -81,6 +83,21 @@ export class AsyncLibraryModule {
       ? createAsyncStatusController(resolvedOptions.statusBasePath)
       : null;
     const statusStoreClass = resolvedOptions.statusStoreClass;
+    const externalStatusResolverClass = resolvedOptions.externalStatusResolverClass;
+    const externalStatusResolverProviders = externalStatusResolverClass
+      ? [
+        externalStatusResolverClass,
+        {
+          provide: ASYNC_EXTERNAL_STATUS_RESOLVER,
+          useExisting: externalStatusResolverClass,
+        },
+      ]
+      : [
+        {
+          provide: ASYNC_EXTERNAL_STATUS_RESOLVER,
+          useValue: undefined,
+        },
+      ];
 
     return {
       module: AsyncLibraryModule,
@@ -115,6 +132,7 @@ export class AsyncLibraryModule {
           provide: ASYNC_STATUS_STORE,
           useExisting: statusStoreClass,
         },
+        ...externalStatusResolverProviders,
         AsyncPatternService,
         {
           provide: ASYNC_PATTERN_GET_STATUS,
@@ -131,6 +149,7 @@ export class AsyncLibraryModule {
         ASYNC_STATUS_BASE_PATH,
         ASYNC_STATUS_LOCATION_BASE_PATH,
         ASYNC_STATUS_STORE,
+        ASYNC_EXTERNAL_STATUS_RESOLVER,
         AsyncPatternService,
         ASYNC_PATTERN_GET_STATUS,
         ASYNC_PATTERN_START_PROCESS,

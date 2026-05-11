@@ -1,5 +1,6 @@
 import { Type } from '@nestjs/common';
 import { AsyncAllowedMethod } from './async-options.interface';
+import { IAsyncExternalStatusResolver } from './services/async-external-status-resolver.interface';
 import { IAsyncStatusStore } from './services/async-status-store.interface';
 
 export interface AsyncModuleOptions {
@@ -11,4 +12,5 @@ export interface AsyncModuleOptions {
   statusLocationBasePath?: string;
   statusTtlSeconds?: number | null;
   statusStoreClass?: Type<IAsyncStatusStore>;
+  externalStatusResolverClass?: Type<IAsyncExternalStatusResolver>;
 }

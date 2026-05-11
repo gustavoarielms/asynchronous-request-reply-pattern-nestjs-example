@@ -156,6 +156,26 @@ AsyncLibraryModule.forRoot({
 })
 ```
 
+### `externalStatusResolverClass`
+
+Optional injectable class used to query an external provider when a job is still in `waiting_external`.
+
+Default:
+
+```ts
+undefined
+```
+
+The class must implement `IAsyncExternalStatusResolver`.
+
+When configured, `GET /<statusBasePath>/status/:id` calls the resolver only for stored `waiting_external` statuses:
+
+- return `null` to keep waiting for the webhook
+- return `completed` to persist and return the completed status
+- return `failed` to persist and return the failed status
+
+See [host-processor-contract.md](host-processor-contract.md#optional-webhook-failover) for the full example.
+
 ## Recommended Defaults
 
 For most host applications, this is enough:
@@ -172,4 +192,5 @@ Use more explicit options only when the host needs:
 - a different public status route
 - a custom location path
 - a custom status store
+- an external provider lookup fallback while waiting for a webhook
 - a specific job naming convention
