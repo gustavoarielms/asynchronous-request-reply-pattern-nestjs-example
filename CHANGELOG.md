@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/compare/nestjs-async-request-reply-v0.3.0...nestjs-async-request-reply-v0.3.1) (2026-05-08)
+
+
+### Bug Fixes
+
+* **async:** preserve externally completed status ([#82](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/issues/82)) ([15686e8](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/commit/15686e88313d2ebb153790d3f879caf6034d34b7))
+
 ## [0.3.0](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/compare/nestjs-async-request-reply-v0.2.0...nestjs-async-request-reply-v0.3.0) (2026-05-02)
 
 
