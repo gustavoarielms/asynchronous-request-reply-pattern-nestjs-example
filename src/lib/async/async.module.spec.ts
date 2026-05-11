@@ -1,7 +1,12 @@
 import { Injectable, Provider } from '@nestjs/common';
-import { ASYNC_MODULE_OPTIONS, ASYNC_STATUS_STORE } from './async.tokens';
+import { ASYNC_EXTERNAL_STATUS_RESOLVER, ASYNC_MODULE_OPTIONS, ASYNC_STATUS_STORE } from './async.tokens';
 import { AsyncLibraryModule } from './async.module';
 import { AsyncStatusResponse, AsyncStatusResult } from './interfaces/http/async-status-response.interface';
+import {
+  AsyncExternalStatusContext,
+  AsyncExternalStatusResolution,
+  IAsyncExternalStatusResolver,
+} from './interfaces/services/async-external-status-resolver.interface';
 import { IAsyncStatusStore } from './interfaces/services/async-status-store.interface';
 
 @Injectable()
@@ -28,6 +33,15 @@ class CustomStatusStore implements IAsyncStatusStore {
 
   setFailed(_jobId: string, _result: AsyncStatusResult): Promise<void> {
     return Promise.resolve();
+  }
+}
+
+@Injectable()
+class CustomExternalStatusResolver implements IAsyncExternalStatusResolver {
+  resolveExternalStatus(
+    _context: AsyncExternalStatusContext
+  ): Promise<AsyncExternalStatusResolution> {
+    return Promise.resolve(null);
   }
 }
 
@@ -58,6 +72,20 @@ describe('AsyncLibraryModule', () => {
     ) as Provider & { useValue: { statusTtlSeconds: number } };
 
     expect(optionsProvider.useValue.statusTtlSeconds).toBe(3600);
+  });
+
+  it('should register the configured external status resolver behind the public token', () => {
+    const dynamicModule = AsyncLibraryModule.forRoot({
+      externalStatusResolverClass: CustomExternalStatusResolver,
+    });
+
+    const providers = dynamicModule.providers as Provider[];
+
+    expect(providers).toContain(CustomExternalStatusResolver);
+    expect(providers).toContainEqual({
+      provide: ASYNC_EXTERNAL_STATUS_RESOLVER,
+      useExisting: CustomExternalStatusResolver,
+    });
   });
 
   it('should reject invalid status TTL values', () => {

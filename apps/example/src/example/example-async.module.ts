@@ -4,6 +4,7 @@ import { AsyncLibraryModule } from '../../../../src/lib/async/async.module';
 import { ExampleAsyncController } from './controllers/async.controller';
 import { BusinessInteractor } from './interactors/business.interactor';
 import { BusinessService } from './services/business.service';
+import { ExternalStatusResolverService } from './services/external-status-resolver.service';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { BusinessService } from './services/business.service';
     }),
     AsyncLibraryModule.forRoot({
       exposeStatusController: true,
+      externalStatusResolverClass: ExternalStatusResolverService,
     }),
   ],
   controllers: [ExampleAsyncController],

@@ -267,6 +267,30 @@ async function assertWebhookCase() {
   }
 }
 
+async function assertWebhookFailoverCase() {
+  const location = await createJob({
+    name: 'smoke-webhook-failover',
+    milliseconds: 0,
+    mode: 'external',
+    externalStatusLookup: true,
+  });
+  await assertImmediateStatus(location);
+  const waitingStatus = await waitForWaitingExternal(location);
+
+  if (waitingStatus.status !== 'waiting_external') {
+    fail(`Expected waiting_external before external lookup, got ${JSON.stringify(waitingStatus)}`);
+  }
+
+  const { payload } = await waitForTerminal(location);
+
+  if (
+    payload.status !== 'completed'
+    || payload.result !== 'External status lookup completed: smoke-webhook-failover'
+  ) {
+    fail(`Unexpected webhook failover payload: ${JSON.stringify(payload)}`);
+  }
+}
+
 async function run() {
   if (shouldStartApp) {
     appPort = await getAvailablePort(requestedPort);
@@ -287,6 +311,7 @@ async function run() {
     await assertFailureCase();
     await assertLongRunningCase();
     await assertWebhookCase();
+    await assertWebhookFailoverCase();
     log('Smoke test passed');
   } finally {
     if (appProcess) {

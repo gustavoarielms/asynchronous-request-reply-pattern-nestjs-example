@@ -1,6 +1,7 @@
 import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import {
+  ASYNC_EXTERNAL_STATUS_RESOLVER,
   ASYNC_JOB_NAME,
   ASYNC_PATTERN_QUEUE,
   ASYNC_STATUS_LOCATION_BASE_PATH,
@@ -21,6 +22,9 @@ describe('AsyncPatternService', () => {
     setWaitingExternal: jest.fn(),
     setCompleted: jest.fn(),
     setFailed: jest.fn(),
+  };
+  const externalStatusResolverMock = {
+    resolveExternalStatus: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -49,6 +53,36 @@ describe('AsyncPatternService', () => {
     service = module.get<AsyncPatternService>(AsyncPatternService);
     jest.clearAllMocks();
   });
+
+  async function createServiceWithExternalStatusResolver(): Promise<AsyncPatternService> {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        AsyncPatternService,
+        {
+          provide: ASYNC_STATUS_STORE,
+          useValue: asyncStatusStoreMock,
+        },
+        {
+          provide: ASYNC_PATTERN_QUEUE,
+          useValue: queueMock,
+        },
+        {
+          provide: ASYNC_JOB_NAME,
+          useValue: 'processJob',
+        },
+        {
+          provide: ASYNC_STATUS_LOCATION_BASE_PATH,
+          useValue: 'async-status',
+        },
+        {
+          provide: ASYNC_EXTERNAL_STATUS_RESOLVER,
+          useValue: externalStatusResolverMock,
+        },
+      ],
+    }).compile();
+
+    return module.get<AsyncPatternService>(AsyncPatternService);
+  }
 
   it('should be defined', () => {
     expect(service).toBeDefined();
@@ -357,6 +391,88 @@ describe('AsyncPatternService', () => {
       completed: false,
     });
     expect(asyncStatusStoreMock.setCompleted).not.toHaveBeenCalled();
+  });
+
+  it('should complete a waiting external status from the optional external resolver', async () => {
+    service = await createServiceWithExternalStatusResolver();
+    const waitingStatus = {
+      status: 'waiting_external' as const,
+      result: 'Waiting for provider webhook',
+      completed: false as const,
+    };
+    asyncStatusStoreMock.get.mockResolvedValue(waitingStatus);
+    queueMock.getJob.mockResolvedValue({
+      data: { externalId: 'provider-123' },
+      getState: jest.fn().mockResolvedValue('completed'),
+      returnvalue: null,
+      failedReason: null,
+    });
+    externalStatusResolverMock.resolveExternalStatus.mockResolvedValue({
+      status: 'completed',
+      result: 'Fetched external result',
+      completed: true,
+    });
+
+    await expect(service.getStatus('123')).resolves.toEqual({
+      status: 'completed',
+      result: 'Fetched external result',
+      completed: true,
+    });
+    expect(externalStatusResolverMock.resolveExternalStatus).toHaveBeenCalledWith({
+      jobId: '123',
+      payload: { externalId: 'provider-123' },
+      waitingStatus,
+    });
+    expect(asyncStatusStoreMock.setCompleted).toHaveBeenCalledWith('123', 'Fetched external result');
+  });
+
+  it('should fail a waiting external status from the optional external resolver', async () => {
+    service = await createServiceWithExternalStatusResolver();
+    asyncStatusStoreMock.get.mockResolvedValue({
+      status: 'waiting_external',
+      result: 'Waiting for provider webhook',
+      completed: false,
+    });
+    queueMock.getJob.mockResolvedValue({
+      data: { externalId: 'provider-123' },
+      getState: jest.fn().mockResolvedValue('completed'),
+      returnvalue: null,
+      failedReason: null,
+    });
+    externalStatusResolverMock.resolveExternalStatus.mockResolvedValue({
+      status: 'failed',
+      result: 'External provider failed',
+      completed: true,
+    });
+
+    await expect(service.getStatus('123')).resolves.toEqual({
+      status: 'failed',
+      result: 'External provider failed',
+      completed: true,
+    });
+    expect(asyncStatusStoreMock.setFailed).toHaveBeenCalledWith('123', 'External provider failed');
+  });
+
+  it('should keep waiting external status when the optional external resolver has no terminal update', async () => {
+    service = await createServiceWithExternalStatusResolver();
+    const waitingStatus = {
+      status: 'waiting_external' as const,
+      result: 'Waiting for provider webhook',
+      completed: false as const,
+    };
+    asyncStatusStoreMock.get.mockResolvedValue(waitingStatus);
+    queueMock.getJob.mockResolvedValue({
+      data: { externalId: 'provider-123' },
+      getState: jest.fn().mockResolvedValue('completed'),
+      returnvalue: null,
+      failedReason: null,
+    });
+    externalStatusResolverMock.resolveExternalStatus.mockResolvedValue(null);
+
+    await expect(service.getStatus('123')).resolves.toEqual(waitingStatus);
+    expect(asyncStatusStoreMock.setCompleted).not.toHaveBeenCalled();
+    expect(asyncStatusStoreMock.setFailed).not.toHaveBeenCalled();
+    expect(asyncStatusStoreMock.setWaitingExternal).not.toHaveBeenCalled();
   });
 
   it('should preserve a completed store status when a webhook completes an external process', async () => {

@@ -210,6 +210,65 @@ export class CompleteExternalOrderProcessor extends WorkerHost {
 
 If the webhook contains the final result already, the webhook handler can call `setCompleted(...)` directly after validation. Enqueue a continuation job when fetching or processing the final result may be slow, retryable, or failure-prone.
 
+## Optional Webhook Failover
+
+When a process is in `waiting_external`, the host can optionally let the status endpoint ask the external provider what happened. This is useful when the webhook is best-effort or may be lost.
+
+Configure an external status resolver:
+
+```ts
+import { Injectable } from '@nestjs/common';
+import {
+  AsyncExternalStatusContext,
+  AsyncExternalStatusResolution,
+  AsyncLibraryModule,
+  IAsyncExternalStatusResolver,
+} from 'nestjs-async-request-reply';
+
+@Injectable()
+export class OrdersExternalStatusResolver implements IAsyncExternalStatusResolver<OrderPayload> {
+  async resolveExternalStatus(
+    context: AsyncExternalStatusContext<OrderPayload>
+  ): Promise<AsyncExternalStatusResolution> {
+    const externalStatus = await this.fetchProviderStatus(context.payload);
+
+    if (externalStatus.done) {
+      return {
+        status: 'completed',
+        result: externalStatus.result,
+        completed: true,
+      };
+    }
+
+    if (externalStatus.failed) {
+      return {
+        status: 'failed',
+        result: externalStatus.error,
+        completed: true,
+      };
+    }
+
+    return null;
+  }
+
+  private fetchProviderStatus(_payload: OrderPayload | undefined): Promise<{
+    done: boolean;
+    failed: boolean;
+    result: string;
+    error: string;
+  }> {
+    throw new Error('Implement this in the host application');
+  }
+}
+
+AsyncLibraryModule.forRoot({
+  exposeStatusController: true,
+  externalStatusResolverClass: OrdersExternalStatusResolver,
+});
+```
+
+The resolver runs only while the stored status is `waiting_external`. Returning `null` keeps the current waiting status. Returning `completed` or `failed` persists the terminal status in `IAsyncStatusStore`, so later polling does not need to ask the provider again.
+
 ## Choosing A Mode
 
 Use `resolve(...)` only when the worker has everything it needs to finish the business operation now.
