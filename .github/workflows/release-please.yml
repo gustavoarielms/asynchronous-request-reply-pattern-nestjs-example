@@ -22,28 +22,3 @@ jobs:
         with:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
-
-      - name: Checkout repository
-        if: ${{ steps.release.outputs.release_created == 'true' }}
-        uses: actions/checkout@v6.0.3
-
-      - name: Setup Node.js
-        if: ${{ steps.release.outputs.release_created == 'true' }}
-        uses: actions/setup-node@v6.4.0
-        with:
-          node-version: 24.16.0
-          registry-url: https://registry.npmjs.org
-
-      - name: Install dependencies
-        if: ${{ steps.release.outputs.release_created == 'true' }}
-        run: npm ci
-
-      - name: Build package
-        if: ${{ steps.release.outputs.release_created == 'true' }}
-        run: npm run build:package
-
-      - name: Publish to npm
-        if: ${{ steps.release.outputs.release_created == 'true' }}
-        run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
