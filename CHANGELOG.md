@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/compare/nestjs-async-request-reply-v0.4.0...nestjs-async-request-reply-v0.4.1) (2026-07-24)
+
+
+### Bug Fixes
+
+* resolve production dependency vulnerabilities ([#89](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/issues/89)) ([bf28d94](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/commit/bf28d94943e52784a12256d216faad5b993950db))
+
 ## [0.4.0](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/compare/nestjs-async-request-reply-v0.3.1...nestjs-async-request-reply-v0.4.0) (2026-05-11)
 
 
