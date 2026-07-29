@@ -1,0 +1,8 @@
+service_tier = "fast"
+
+[features]
+fast_mode = true
+
+[agents]
+max_depth = 1
+max_threads = 6
