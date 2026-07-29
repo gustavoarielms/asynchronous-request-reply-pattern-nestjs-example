@@ -2,6 +2,22 @@
   "name": "nestjs-async-request-reply",
   "version": "0.4.1",
   "description": "NestJS library for asynchronous request-reply HTTP flows backed by BullMQ and Redis.",
+  "keywords": [
+    "nestjs",
+    "nestjs-module",
+    "async-request-reply",
+    "asynchronous-request-reply",
+    "request-reply-pattern",
+    "bullmq",
+    "redis",
+    "job-queue",
+    "background-jobs",
+    "long-running-operations",
+    "http-202",
+    "202-accepted",
+    "polling",
+    "job-status"
+  ],
   "author": "gustavoarielms",
   "license": "MIT",
   "repository": {
