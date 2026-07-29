@@ -1,0 +1,144 @@
+{
+  "name": "multi-sdd-team",
+  "version": 1,
+  "owner": "main_session_orchestrator",
+  "mode": "demo_fast",
+  "principles": [
+    "The main session is the orchestrator.",
+    "The orchestrator classifies first and does not spawn an orchestrator subagent.",
+    "After spawning any subagent, the orchestrator waits for the required handoff before the next local or delegated step.",
+    "No delegated stage may start until its declared dependencies are complete.",
+    "The orchestrator must not inspect, scaffold, implement, or validate locally while subagents are running unless the user explicitly authorizes parallel local work.",
+    "Demo-fast mode: run agents in fast mode, skip hacker by default, and let the main orchestrator apply small reviewer-requested fixes directly."
+  ],
+  "strategies": {
+    "INLINE": {
+      "description": "Small/simple task. Main session implements directly.",
+      "sequence": [
+        {
+          "id": "main_execute",
+          "actor": "main_session",
+          "depends_on": [],
+          "action": "Implement or answer directly."
+        }
+      ]
+    },
+    "SUBAGENT_SINGLE": {
+      "description": "One bounded specialist task.",
+      "sequence": [
+        {
+          "id": "specialist",
+          "actor": "selected_subagent",
+          "depends_on": [],
+          "action": "Complete the bounded delegated task and return a handoff."
+        },
+        {
+          "id": "main_integrate",
+          "actor": "main_session",
+          "depends_on": ["specialist"],
+          "action": "Review the handoff, integrate if needed, and report."
+        }
+      ]
+    },
+    "SUBAGENT_CHAIN": {
+      "description": "Clear multi-step work without full SDD.",
+      "sequence": [
+        {
+          "id": "explore_if_needed",
+          "actor": "explorer",
+          "depends_on": [],
+          "optional": true,
+          "action": "Read-only reconnaissance. Return relevant files, architecture notes, and start points."
+        },
+        {
+          "id": "implement",
+          "actor": "implementer",
+          "depends_on": ["explore_if_needed"],
+          "action": "Make the scoped change using the available handoff."
+        },
+        {
+          "id": "review",
+          "actor": "tester_reviewer",
+          "depends_on": ["implement"],
+          "action": "Report-only validation of the implemented change."
+        },
+        {
+          "id": "main_integrate",
+          "actor": "main_session",
+          "depends_on": ["review"],
+          "action": "Summarize results and perform final integration or small reviewer-requested fixes directly. Do not call implementer again for review fixes in demo-fast mode."
+        }
+      ]
+    },
+    "SDD_INLINE": {
+      "description": "SDD justified but small enough for the main session.",
+      "sequence": [
+        {
+          "id": "main_spec_plan_implement",
+          "actor": "main_session",
+          "depends_on": [],
+          "action": "Write lightweight spec/plan, implement, and validate inline."
+        }
+      ]
+    },
+    "SDD_SUBAGENTS": {
+      "description": "Full SDD flow with strict sequential handoffs.",
+      "sequence": [
+        {
+          "id": "explore",
+          "actor": "explorer",
+          "depends_on": [],
+          "action": "Inspect codebase, inputs, data shape, dependencies, and risks in read-only mode. Return a compact handoff."
+        },
+        {
+          "id": "document",
+          "actor": "documentator",
+          "depends_on": ["explore"],
+          "action": "Write functional and technical specs using the explorer handoff. Do not start before explorer returns."
+        },
+        {
+          "id": "plan",
+          "actor": "planner",
+          "depends_on": ["document"],
+          "action": "Turn specs into ordered, verifiable implementation tasks. Do not start before documentator returns."
+        },
+        {
+          "id": "security_review",
+          "actor": "hacker",
+          "depends_on": ["plan"],
+          "optional": true,
+          "disabled_by_default": true,
+          "condition": "Skip in demo-fast mode. Run only if the user explicitly asks for security review or the task involves auth, secrets, payments, destructive actions, or external network exposure.",
+          "action": "Perform passive security review and return findings before implementation."
+        },
+        {
+          "id": "implement",
+          "actor": "implementer",
+          "depends_on": ["plan", "security_review"],
+          "action": "Implement according to the planner handoff and any security constraints."
+        },
+        {
+          "id": "review",
+          "actor": "tester_reviewer",
+          "depends_on": ["implement"],
+          "action": "Run report-only static/E2E/manual validation and return findings."
+        },
+        {
+          "id": "main_integrate",
+          "actor": "main_session",
+          "depends_on": ["review"],
+          "action": "Integrate final results, resolve tester_reviewer findings directly when they are small or demo-blocking, and summarize evidence. Do not call implementer again for review fixes in demo-fast mode."
+        }
+      ]
+    }
+  },
+  "hard_rules": [
+    "For SDD_SUBAGENTS, never spawn documentator in parallel with explorer.",
+    "For SDD_SUBAGENTS, never spawn planner before documentator returns.",
+    "For SDD_SUBAGENTS, never spawn implementer before planner returns.",
+    "For SDD_SUBAGENTS, never spawn tester_reviewer before implementer returns.",
+    "In demo-fast mode, skip hacker unless explicitly requested by the user or required by sensitive security scope.",
+    "In demo-fast mode, if tester_reviewer requests changes, the main session fixes them directly instead of calling implementer again.",
+    "If a dependency is optional and skipped, note why it was skipped before continuing."
+  ]
+}
