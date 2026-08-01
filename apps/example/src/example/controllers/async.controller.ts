@@ -4,13 +4,14 @@ import { Async } from '../../../../../src/lib/async/decorators/async.decorator';
 import { AsyncAcceptedResponse } from '../../../../../src/lib/async/interfaces/http/async-accepted-response.interface';
 import { IAsyncStatusStore } from '../../../../../src/lib/async/interfaces/services/async-status-store.interface';
 import { AsyncRequestBody, WebhookRequestBody } from '../interfaces/http/async-request-body.interface';
+import { AsyncRequestPipe } from '../pipes/async-request.pipe';
 
 @Controller('async')
 export class ExampleAsyncController {
   constructor(@Inject(ASYNC_STATUS_STORE) private readonly asyncStatusStore: IAsyncStatusStore) {}
 
   @Post('save')
-  @Async({ payloadPath: 'data' })
+  @Async({ payloadPath: 'data', pipe: new AsyncRequestPipe() })
   @HttpCode(202)
   async handleRequest(@Body() _body: AsyncRequestBody): Promise<AsyncAcceptedResponse> {
     return undefined;

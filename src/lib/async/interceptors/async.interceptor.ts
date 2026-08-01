@@ -50,15 +50,23 @@ export class AsyncInterceptor implements NestInterceptor {
 
     const payload = this.resolvePayload(request.body, options.payloadPath);
 
-    if (payload !== undefined) {
-      return of(await this.asyncService.startProcess(payload));
+    if (payload === undefined) {
+      throw new BadRequestException(
+        options.payloadPath
+          ? `Payload field "${options.payloadPath}" is required`
+          : 'Request body is required'
+      );
     }
 
-    throw new BadRequestException(
-      options.payloadPath
-        ? `Payload field "${options.payloadPath}" is required`
-        : 'Request body is required'
-    );
+    const transformedPayload = options.pipe
+      ? await options.pipe.transform(payload, {
+          type: 'body',
+          metatype: undefined,
+          data: options.payloadPath,
+        })
+      : payload;
+
+    return of(await this.asyncService.startProcess(transformedPayload));
   }
 
   private resolvePayload(body: unknown, payloadPath?: string): unknown {

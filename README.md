@@ -145,7 +145,33 @@ The flow in this project is:
 4. `BusinessInteractor` consumes the job in the background.
 5. `GET /async-status/status/:id` returns the current job status.
 
-In this repository, the example controller uses `@Async({ payloadPath: 'data' })`, so the example request body still wraps the payload under `data`. The library default is more generic: `@Async()` uses the full request body as the enqueued payload.
+In this repository, the example controller configures `payloadPath: 'data'`, so the example request body still wraps the payload under `data`. The library default is more generic: `@Async()` uses the full request body as the enqueued payload.
+
+### Explicit payload validation and transformation
+
+`@Async()` completes the asynchronous HTTP flow without invoking the route handler. Pipes declared on `@Body()` and global pipes are therefore not automatically reused. Configure an explicit pipe instance when the job payload must be validated or transformed:
+
+```ts
+import { ValidationPipe } from '@nestjs/common';
+
+@Post('orders')
+@Async({
+  payloadPath: 'data',
+  pipe: new ValidationPipe({
+    transform: true,
+    whitelist: true,
+    expectedType: CreateOrderDto,
+  }),
+})
+@HttpCode(202)
+createOrder(@Body() _body: unknown): Promise<AsyncAcceptedResponse> {
+  return undefined;
+}
+```
+
+The pipe runs after `payloadPath` is resolved; without `payloadPath`, it receives the full body. Only the returned value is passed to BullMQ. A class-validator-backed `ValidationPipe` must set `expectedType` because the explicit invocation has no route-parameter metatype. The host application must install `class-validator` and `class-transformer` when using that validation stack.
+
+`pipe` accepts an already constructed `PipeTransform` instance. Classes and injection tokens are not resolved through Nest dependency injection. HTTP exceptions preserve their status and prevent enqueueing; arbitrary errors follow Nest's normal HTTP 500 handling and also prevent enqueueing. Omitting `pipe` preserves the previous behavior. Guards still execute before the interceptor.
 
 `AsyncLibraryModule.forRoot(...)` can also expose the default polling controller from the library itself. The example app enables it with:
 
@@ -284,7 +310,7 @@ Validation error:
 400 Bad Request
 ```
 
-This happens in the example app when the request does not include the `data` field configured via `@Async({ payloadPath: 'data' })`.
+This happens in the example app when the request does not include the `data` field configured via `payloadPath`, or when its explicit `AsyncRequestPipe` rejects invalid data. In either case, no job is added to BullMQ.
 
 ### Check async status
 

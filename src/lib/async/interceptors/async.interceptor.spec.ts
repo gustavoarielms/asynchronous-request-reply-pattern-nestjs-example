@@ -104,6 +104,146 @@ describe('AsyncInterceptor', () => {
     });
   });
 
+  it('applies a configured pipe to the resolved payload before starting the process', async () => {
+    const pipe = {
+      transform: jest.fn().mockResolvedValue({
+        orderId: 123,
+      }),
+    };
+
+    (reflector.get as jest.Mock).mockImplementation((key: string) => {
+      if (key === ASYNC_OPTIONS) {
+        return {
+          payloadPath: 'data.attributes',
+          pipe,
+        } satisfies AsyncOptions;
+      }
+
+      return undefined;
+    });
+
+    const interceptor = createInterceptor();
+    const payload = {
+      orderId: '123',
+    };
+
+    await lastValueFrom(
+      await interceptor.intercept(
+        createContext({
+          method: 'POST',
+          body: {
+            data: {
+              attributes: payload,
+            },
+          },
+        }),
+        next,
+      ),
+    );
+
+    expect(pipe.transform).toHaveBeenCalledWith(payload, {
+      type: 'body',
+      metatype: undefined,
+      data: 'data.attributes',
+    });
+    expect(startProcess).toHaveBeenCalledWith({
+      orderId: 123,
+    });
+  });
+
+  it('passes undefined pipe metadata data when the full body is used', async () => {
+    const pipe = {
+      transform: jest.fn().mockImplementation((value: unknown) => value),
+    };
+
+    (reflector.get as jest.Mock).mockImplementation((key: string) => {
+      if (key === ASYNC_OPTIONS) {
+        return {
+          pipe,
+        } satisfies AsyncOptions;
+      }
+
+      return undefined;
+    });
+
+    const interceptor = createInterceptor();
+    const body = {
+      name: 'job',
+    };
+
+    await lastValueFrom(
+      await interceptor.intercept(
+        createContext({ method: 'POST', body }),
+        next,
+      ),
+    );
+
+    expect(pipe.transform).toHaveBeenCalledWith(body, {
+      type: 'body',
+      metatype: undefined,
+      data: undefined,
+    });
+    expect(startProcess).toHaveBeenCalledWith(body);
+  });
+
+  it('propagates HTTP errors from the pipe without starting the process', async () => {
+    const error = new BadRequestException('Invalid async payload');
+    const pipe = {
+      transform: jest.fn().mockRejectedValue(error),
+    };
+
+    (reflector.get as jest.Mock).mockImplementation((key: string) => {
+      if (key === ASYNC_OPTIONS) {
+        return {
+          pipe,
+        } satisfies AsyncOptions;
+      }
+
+      return undefined;
+    });
+
+    const interceptor = createInterceptor();
+
+    await expect(
+      interceptor.intercept(
+        createContext({ method: 'POST', body: { name: 'invalid' } }),
+        next,
+      ),
+    ).rejects.toBe(error);
+
+    expect(startProcess).not.toHaveBeenCalled();
+  });
+
+  it('propagates arbitrary pipe errors without starting the process', async () => {
+    const error = new Error('Unexpected pipe failure');
+    const pipe = {
+      transform: jest.fn().mockImplementation(() => {
+        throw error;
+      }),
+    };
+
+    (reflector.get as jest.Mock).mockImplementation((key: string) => {
+      if (key === ASYNC_OPTIONS) {
+        return {
+          pipe,
+        } satisfies AsyncOptions;
+      }
+
+      return undefined;
+    });
+
+    const interceptor = createInterceptor();
+
+    await expect(
+      interceptor.intercept(
+        createContext({ method: 'POST', body: { name: 'invalid' } }),
+        next,
+      ),
+    ).rejects.toBe(error);
+
+    expect(startProcess).not.toHaveBeenCalled();
+  });
+
   it('rejects methods outside the default whitelist', async () => {
     const interceptor = createInterceptor();
 
@@ -169,10 +309,15 @@ describe('AsyncInterceptor', () => {
   });
 
   it('throws when a nested payloadPath cannot be resolved', async () => {
+    const pipe = {
+      transform: jest.fn(),
+    };
+
     (reflector.get as jest.Mock).mockImplementation((key: string) => {
       if (key === ASYNC_OPTIONS) {
         return {
           payloadPath: 'data.attributes',
+          pipe,
         } satisfies AsyncOptions;
       }
 
@@ -194,6 +339,7 @@ describe('AsyncInterceptor', () => {
     ).rejects.toThrow(new BadRequestException('Payload field "data.attributes" is required'));
 
     expect(startProcess).not.toHaveBeenCalled();
+    expect(pipe.transform).not.toHaveBeenCalled();
   });
 
   it('throws when the request body is missing and no payloadPath is configured', async () => {
