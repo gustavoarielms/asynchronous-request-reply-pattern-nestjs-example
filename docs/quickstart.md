@@ -64,6 +64,27 @@ If the host wants a nested payload instead:
 @Async({ payloadPath: 'data' })
 ```
 
+### Validate Or Transform Before Enqueueing
+
+`@Async()` does not invoke the route handler, so it cannot automatically reuse pipes attached to `@Body()` or a global `ValidationPipe`. Pass an explicit pipe instance when the queued payload must be validated or transformed:
+
+```ts
+import { ValidationPipe } from '@nestjs/common';
+
+@Async({
+  payloadPath: 'data',
+  pipe: new ValidationPipe({
+    transform: true,
+    whitelist: true,
+    expectedType: CreateOrderDto,
+  }),
+})
+```
+
+The pipe receives the value selected by `payloadPath`, or the full request body when `payloadPath` is omitted. Only its returned value is enqueued. Because `@Async()` invokes the pipe directly with no route-parameter metatype, a class-validator-backed `ValidationPipe` must set `expectedType` to the DTO class. The consuming application must also install `class-validator` and `class-transformer`.
+
+Pass an already constructed instance; `@Async()` does not resolve pipe classes or injection tokens through Nest dependency injection. If the pipe throws an HTTP exception, its status is preserved and no job is enqueued. Other errors become the normal HTTP 500 response. Endpoints without `pipe` retain the previous behavior.
+
 ## 4. Add A Worker
 
 The library does not implement business processing for you. The host app must still provide a BullMQ worker:
