@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.2](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/compare/nestjs-async-request-reply-v0.4.1...nestjs-async-request-reply-v0.4.2) (2026-08-01)
+
+
+### Bug Fixes
+
+* **async:** validate payload before enqueueing ([#103](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/issues/103)) ([840e218](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/commit/840e2180f1a2e3cafeffc1a23968253d411f6692))
+
 ## [0.4.1](https://github.com/gustavoarielms/asynchronous-request-reply-pattern-nestjs-example/compare/nestjs-async-request-reply-v0.4.0...nestjs-async-request-reply-v0.4.1) (2026-07-24)
 
 
