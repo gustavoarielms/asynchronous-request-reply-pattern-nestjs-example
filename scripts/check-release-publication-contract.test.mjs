@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
+import yaml from 'js-yaml';
 
 const repositoryRoot = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -26,20 +27,8 @@ test('npm publication depends only on a published GitHub Release', async () => {
     path.join(repositoryRoot, '.github', 'workflows', 'publish-package.yml'),
     'utf8',
   );
-  const lines = workflow.split('\n');
-  const onLine = lines.indexOf('on:');
-  const nextTopLevelKey = lines.findIndex(
-    (line, index) => index > onLine && /^[^\s#][^:]*:/.test(line),
-  );
-  const endOfOnBlock = nextTopLevelKey === -1 ? lines.length : nextTopLevelKey;
-  const triggerLines = lines
-    .slice(onLine + 1, endOfOnBlock)
-    .filter((line) => line.trim() && !line.trimStart().startsWith('#'));
+  const parsedWorkflow = yaml.load(workflow);
 
-  assert.notEqual(onLine, -1, 'publish workflow must declare an on block');
-  assert.deepEqual(
-    triggerLines,
-    ['  release:', '    types:', '      - published'],
-    'publish workflow must run only for a published GitHub Release',
-  );
+  assert.deepEqual(Object.keys(parsedWorkflow.on), ['release']);
+  assert.deepEqual(parsedWorkflow.on.release.types, ['published']);
 });
