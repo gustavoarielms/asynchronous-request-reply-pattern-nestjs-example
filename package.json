@@ -53,7 +53,6 @@
     "check:workflow-actions": "node scripts/check-workflow-action-pins.mjs",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "pack:dry-run": "npm pack --dry-run",
-    "publish:npm": "npm publish --access public",
     "redis:up": "docker compose up -d redis",
     "redis:down": "docker compose down",
     "smoke:example": "node ./scripts/smoke-example.mjs",
