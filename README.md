@@ -119,8 +119,10 @@ The intended flow is:
 1. merge regular changes into `main`
 2. release-please opens or updates a release PR
 3. merge that release PR
-4. the same [release-please.yml](.github/workflows/release-please.yml) run creates the Git tag and GitHub Release
-5. the release event starts [publish-package.yml](.github/workflows/publish-package.yml), which validates the release tag and publishes the verified package with npm provenance
+4. [release-please.yml](.github/workflows/release-please.yml) creates the Git tag and a draft GitHub Release
+5. a maintainer reviews and manually publishes that existing draft Release
+6. the resulting `release: published` event starts [publish-package.yml](.github/workflows/publish-package.yml), which validates the tag, `package.json` version, and `main` ancestry
+7. after approval in the `npm-production` environment, the workflow uses GitHub OIDC to publish the verified package to npm with provenance
 
 The initial release manifest lives in [release-please-config.json](release-please-config.json) and [.release-please-manifest.json](.release-please-manifest.json).
 Release hygiene expectations for changelog quality, breaking changes, and migration notes are documented in [docs/release-hygiene.md](docs/release-hygiene.md).

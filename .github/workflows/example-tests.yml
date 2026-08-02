@@ -39,6 +39,9 @@ jobs:
       - name: Test workflow Action pin checker
         run: npm run test:workflow-actions
 
+      - name: Test release publication contract
+        run: npm run test:release-publication
+
       - name: Install dependencies
         run: npm ci
 

@@ -11,8 +11,14 @@ The publication workflow uses GitHub OIDC and does not use an `NPM_TOKEN`. Befor
 
 Repository tests cannot verify those settings. Confirm both controls in GitHub and npm before publishing a release; do not add a long-lived npm token as a fallback.
 
-## Release trigger constraint
+## Release flow
 
-The publish workflow intentionally accepts only the GitHub `release: published` event. [GitHub does not start a new workflow for most events created with a workflow's default `GITHUB_TOKEN`](https://docs.github.com/en/actions/concepts/security/github_token#when-github_token-triggers-workflow-runs), and `release-please.yml` currently uses that default token. Therefore, a Release created by the current release-please run may not start the publish workflow.
+1. Merge the release PR prepared by release-please.
+2. `release-please.yml` creates the version tag and a draft GitHub Release. The `force-tag-creation` setting ensures the tag exists while the Release is still a draft.
+3. A maintainer reviews and manually publishes that existing draft Release.
+4. The resulting `release: published` event starts `publish-package.yml`.
+5. The workflow verifies that the release tag has the expected `nestjs-async-request-reply-vX.Y.Z` format, matches `package.json`, resolves to the checked-out commit, and belongs to `main`.
+6. A maintainer approves the `npm-production` environment deployment.
+7. The workflow uses GitHub OIDC to publish the verified package to npm with provenance.
 
-This is separate from the npm environment and Trusted Publishing configuration above. Before the next release, a maintainer must ensure the Release is published by an actor whose event can start workflows, or separately approve a GitHub App/PAT-based release automation design. This repository change does not add either credential or an alternate trigger.
+The publish workflow intentionally accepts only the GitHub `release: published` event. [GitHub does not start a new workflow for most events created with a workflow's default `GITHUB_TOKEN`](https://docs.github.com/en/actions/concepts/security/github_token#when-github_token-triggers-workflow-runs), so release-please leaves the Release as a draft for a maintainer to publish. Do not add a PAT, GitHub App credential, `NPM_TOKEN`, `workflow_dispatch`, or another publication trigger as a workaround.

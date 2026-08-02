@@ -66,6 +66,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
+    "test:release-publication": "node --test scripts/check-release-publication-contract.test.mjs",
     "test:workflow-actions": "node --test scripts/check-workflow-action-pins.test.mjs"
   },
   "dependencies": {
