@@ -50,6 +50,7 @@
   "scripts": {
     "build": "nest build",
     "build:package": "tsc -p tsconfig.package.json --incremental false",
+    "check:workflow-actions": "node scripts/check-workflow-action-pins.mjs",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "pack:dry-run": "npm pack --dry-run",
     "publish:npm": "npm publish --access public",
@@ -65,7 +66,8 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "test:workflow-actions": "node --test scripts/check-workflow-action-pins.test.mjs"
   },
   "dependencies": {
     "@nestjs/bullmq": "^11.0.4",

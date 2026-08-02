@@ -106,15 +106,9 @@ Security note:
 - the package currently targets BullMQ `5.76.2` and newer compatible patch releases
 - consumers should avoid the previously used `5.74.1` line
 
-To publish it manually from this repository:
+The repository publishes through [publish-package.yml](.github/workflows/publish-package.yml) only after a GitHub Release with a `nestjs-async-request-reply-vX.Y.Z` tag is published. The workflow verifies the tag, `package.json` version, and `main` ancestry before entering the protected npm publishing job.
 
-```bash
-npm login
-npm run build:package
-npm run publish:npm
-```
-
-The repository also includes [publish-package.yml](.github/workflows/publish-package.yml), which can publish the package to npm when triggered manually.
+The required GitHub environment and npm Trusted Publishing settings are documented in [docs/npm-trusted-publishing.md](docs/npm-trusted-publishing.md). They must be configured before the next release.
 
 ## Release automation
 
@@ -126,7 +120,7 @@ The intended flow is:
 2. release-please opens or updates a release PR
 3. merge that release PR
 4. the same [release-please.yml](.github/workflows/release-please.yml) run creates the Git tag and GitHub Release
-5. when that same run actually creates a release, it checks out the release tag, builds the package, and publishes it to npm
+5. the release event starts [publish-package.yml](.github/workflows/publish-package.yml), which validates the release tag and publishes the verified package with npm provenance
 
 The initial release manifest lives in [release-please-config.json](release-please-config.json) and [.release-please-manifest.json](.release-please-manifest.json).
 Release hygiene expectations for changelog quality, breaking changes, and migration notes are documented in [docs/release-hygiene.md](docs/release-hygiene.md).
